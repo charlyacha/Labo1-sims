@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ajuste ponderado, χ² reducido y promedio ponderado · Labo 1 (Cátedra Acha)</title>
+<style>
+:root{
+  --tinta:#16222c; --gris:#5b6b76; --linea:#d7dee3; --fondo:#ffffff; --panel:#f5f8fa;
+  --azul:#1b4965; --rojo:#c1444f; --verde:#1f8a70; --ocre:#c98a1e; --violeta:#6a4c93;
+  --radio:10px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fondo);color:var(--tinta);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  font-size:16px;line-height:1.55}
+.wrap{max-width:920px;margin:0 auto;padding:18px 16px 48px}
+header.top{border-bottom:3px solid var(--azul);padding-bottom:10px;margin-bottom:18px}
+.tag{display:inline-block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;
+  color:#fff;background:var(--azul);padding:3px 9px;border-radius:999px}
+h1{font-size:1.5rem;margin:.5rem 0 .2rem;line-height:1.25}
+h2{font-size:1.12rem;margin:1.9rem 0 .5rem;color:var(--azul);
+   border-left:4px solid var(--azul);padding-left:9px}
+h3{font-size:1rem;margin:1.2rem 0 .3rem;color:var(--gris)}
+p.sub{color:var(--gris);margin:.2rem 0 0}
+.card{background:var(--panel);border:1px solid var(--linea);border-radius:var(--radio);
+  padding:14px;margin:14px 0}
+.card.blanco{background:#fff}
+.ctrl{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px 18px;margin:6px 0 2px}
+.ctrl label{display:block;font-size:13px;color:var(--gris);margin-bottom:2px}
+.ctrl .val{float:right;font-variant-numeric:tabular-nums;color:var(--tinta);font-weight:600}
+input[type=range]{width:100%;accent-color:var(--azul);margin:0}
+select,input[type=number]{width:100%;padding:5px 7px;border:1px solid var(--linea);
+  border-radius:6px;background:#fff;color:var(--tinta);font-size:14px}
+.btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+button{font:inherit;font-size:14px;padding:7px 14px;border-radius:8px;border:1px solid var(--azul);
+  background:var(--azul);color:#fff;cursor:pointer}
+button.sec{background:#fff;color:var(--azul)}
+button:active{transform:translateY(1px)}
+button[disabled]{opacity:.45;cursor:default}
+label.chk{font-size:14px;color:var(--tinta);display:inline-flex;align-items:center;gap:6px;
+  margin-right:14px;cursor:pointer}
+canvas{display:block;width:100%;background:#fff;border:1px solid var(--linea);
+  border-radius:8px;touch-action:none}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:640px){.grid2{grid-template-columns:1fr}}
+.out{font-variant-numeric:tabular-nums;font-size:14px}
+.out b{font-weight:600}
+table{border-collapse:collapse;width:100%;font-size:14px;margin-top:8px}
+th,td{border-bottom:1px solid var(--linea);padding:5px 7px;text-align:right}
+th:first-child,td:first-child{text-align:left}
+th{color:var(--gris);font-weight:600;font-size:12.5px;text-transform:uppercase;letter-spacing:.03em}
+.nota{border-left:4px solid var(--ocre);background:#fdf8ec;padding:10px 12px;border-radius:0 8px 8px 0;
+  margin:14px 0;font-size:14.5px}
+.clave{border-left:4px solid var(--verde);background:#eef8f5;padding:10px 12px;border-radius:0 8px 8px 0;
+  margin:14px 0;font-size:14.5px}
+.aviso{border-left:4px solid var(--rojo);background:#fbeff0;padding:10px 12px;border-radius:0 8px 8px 0;
+  margin:14px 0;font-size:14.5px}
+.consigna{background:#fff;border:1px dashed var(--azul);border-radius:8px;padding:10px 12px;margin:14px 0;font-size:14.5px}
+.consigna b{color:var(--azul)}
+code{background:#eef2f5;padding:1px 5px;border-radius:4px;font-size:.9em}
+footer{margin-top:34px;padding-top:12px;border-top:1px solid var(--linea);
+  color:var(--gris);font-size:13px}
+a{color:var(--azul)}
+.legend{font-size:13px;color:var(--gris);margin-top:6px}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:2px;margin-right:4px;vertical-align:-1px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top">
+  <span class="tag">Clase 6 · Labo 1</span>
+  <h1>Ajuste ponderado, χ² reducido y promedio ponderado</h1>
+  <p class="sub">Cómo intervienen las incertezas de cada punto en el ajuste.</p>
+</header>
+
+<p>Hasta acá el ajuste trataba a todos los puntos por igual. Pero si un punto tiene una barra de
+error diez veces más chica que otro, <b>no vale lo mismo</b>. Tomarse en serio las barras cambia el
+resultado, cambia su incerteza, y —sobre todo— habilita una pregunta nueva: <b>¿el modelo describe
+los datos dentro de sus incertezas?</b></p>
+
+<h2>1 · Pesar o no pesar</h2>
+<div class="card">
+  <div class="ctrl">
+    <div><label for="het">Desigualdad de las barras <span class="val" id="het_v"></span></label>
+      <input type="range" id="het" min="1" max="12" step="0.5" value="6" data-fmt="1"></div>
+    <div><label for="np">Cantidad de puntos <span class="val" id="np_v"></span></label>
+      <input type="range" id="np" min="4" max="30" step="1" value="10" data-fmt="0"></div>
+  </div>
+  <div class="btns" style="margin-top:0">
+    <button id="bn">Nuevos datos</button>
+    <label class="chk"><input type="checkbox" id="chO" checked> mostrar también el ajuste sin pesos</label>
+  </div>
+  <canvas id="cvF" style="height:320px"></canvas>
+  <canvas id="cvR" style="height:190px"></canvas>
+  <p class="out" id="outF"></p>
+</div>
+<div class="nota">
+Con pesos, cada punto entra con w = 1/σ². Un punto con la mitad de incerteza pesa <b>cuatro</b>
+veces más. El ajuste sin pesos no está "mal" cuando todas las barras son iguales (ahí coinciden
+exactamente), pero cuando no lo son, descarta información disponible y la incerteza de la pendiente
+puede quedar mal estimada.
+</div>
+
+<h2>2 · χ² y χ²<sub>red</sub>: el modelo contra las barras</h2>
+<p>χ² = Σ [(yᵢ − f(xᵢ))/σᵢ]² suma los residuos <b>en unidades de barra de error</b>. Si el modelo describe el proceso y las incertezas están bien estimadas, cada término aporta ≈ 1 y χ²<sub>red</sub> = χ²/ν ≈ 1, con
+ν = N − (parámetros ajustados).</p>
+<div class="card blanco">
+  <div class="ctrl">
+    <div><label for="esc">Escala de las incertezas declaradas <span class="val" id="esc_v"></span>×</label>
+      <input type="range" id="esc" min="0.3" max="3" step="0.05" value="1" data-fmt="2"></div>
+    <div><label for="cur">Curvatura oculta en los datos <span class="val" id="cur_v"></span></label>
+      <input type="range" id="cur" min="0" max="1" step="0.02" value="0" data-fmt="2"></div>
+  </div>
+  <div class="btns" style="margin-top:0"><button id="bh">Repetir el experimento 3000 veces</button></div>
+  <canvas id="cvH" style="height:290px"></canvas>
+  <p class="out" id="outH"></p>
+</div>
+<div class="clave">
+Tres situaciones para comparar:<br>
+<b>χ²<sub>red</sub> ≈ 1</b> — el modelo describe los datos dentro de las incertezas.<br>
+<b>χ²<sub>red</sub> ≫ 1</b> — o el modelo es incompleto (falta física), o subestimaste las
+incertezas. Los residuos distinguen entre las dos: con estructura, es el modelo; sin estructura,
+son las barras.<br>
+<b>χ²<sub>red</sub> ≪ 1</b> — <i>no</i> es un ajuste "mejor que perfecto": es la firma de
+incertezas sobreestimadas. Ojo, la convención conservadora Δ = D/2 produce exactamente esto.
+</div>
+
+<h2>3 · Qué hace <code>absolute_sigma=False</code></h2>
+<p>Es el valor por omisión de <code>scipy.optimize.curve_fit</code> y conviene entender su efecto antes de interpretar la matriz de covarianza.</p>
+<div class="card">
+  <table id="tabS"></table>
+  <p class="out" id="outS"></p>
+</div>
+<div class="aviso">
+Con <code>absolute_sigma=False</code>, scipy <b>reescala la matriz de covarianza</b> por
+χ²<sub>red</sub>, es decir supone que tus barras están bien salvo un factor global y lo absorbe.
+Consecuencia doble: (1) las incertezas de los parámetros ya no son las que corresponden a tus
+incertezas experimentales, y (2) perdés simultáneamente el diagnóstico, porque el ajuste queda
+"forzado" a χ²<sub>red</sub> = 1 por construcción. Si tus σ son incertezas físicas de verdad, la
+llamada correcta es <code>curve_fit(f, x, y, sigma=sy, absolute_sigma=True)</code>.
+</div>
+
+<h2>4 · El promedio ponderado no es una receta aparte</h2>
+<p>Ajustar el modelo más simple posible —una constante, y = c— con pesos 1/σᵢ² da exactamente
+c = Σwᵢyᵢ/Σwᵢ con Δc = 1/√Σwᵢ. El promedio ponderado <b>es</b> un ajuste por cuadrados mínimos
+ponderados; no hay que aprenderlo como fórmula suelta.</p>
+<div class="card blanco">
+  <div class="btns" style="margin-top:0"><button id="bp">Otra tanda de grupos</button></div>
+  <canvas id="cvP" style="height:290px"></canvas>
+  <p class="out" id="outP"></p>
+</div>
+
+<div class="consigna">
+<b>Para pensar antes de la clase.</b> (a) ¿Cuánto tiene que valer la escala de incertezas para que
+χ²<sub>red</sub> pase de 4 a 1? (b) Con curvatura 0.5, ¿χ²<sub>red</sub> te avisa? ¿Y los residuos?
+(c) En el promedio ponderado, ¿puede la incerteza del resultado ser menor que la del mejor grupo
+individual? ¿Tiene sentido?
+</div>
+
+<footer>
+  <b>Laboratorio 1 — Cátedra Acha</b> · Departamento de Física, FCEyN-UBA ·
+  Simulación interactiva de uso libre para el curso. Todo corre en tu navegador: no se envía ningún dato.
+</footer>
+</div>
+<script>
+/* ============ kit minimo de graficos + estadistica (Labo 1, Catedra Acha) ============ */
+var C={azul:'#1b4965',rojo:'#c1444f',verde:'#1f8a70',ocre:'#c98a1e',violeta:'#6a4c93',
+       gris:'#5b6b76',linea:'#d7dee3',tinta:'#16222c'};
+
+function $(id){return document.getElementById(id);}
+function el(t,a){var e=document.createElement(t);for(var k in (a||{}))e[k]=a[k];return e;}
+
+/* ---- numeros ---- */
+function nice(x,round){var e=Math.floor(Math.log10(x)),f=x/Math.pow(10,e),nf;
+  if(round){nf=f<1.5?1:(f<3?2:(f<7?5:10));}else{nf=f<=1?1:(f<=2?2:(f<=5?5:10));}
+  return nf*Math.pow(10,e);}
+function ticks(a,b,n){if(!(b>a))return{t:[a],step:1};
+  var step=nice((b-a)/Math.max(1,n-1),true),s=Math.ceil(a/step-1e-9)*step,t=[];
+  for(var v=s;v<=b+step*1e-6;v+=step)t.push(Math.abs(v)<step*1e-9?0:v);
+  return{t:t,step:step};}
+function fmtTick(v,step){var a=Math.abs(v);
+  if(a!==0&&(a>=1e5||a<1e-4))return v.toExponential(1);
+  var d=Math.max(0,-Math.floor(Math.log10(step)+1e-9));return v.toFixed(Math.min(d,6));}
+function fmt(x,n){if(!isFinite(x))return '—';return x.toFixed(n===undefined?2:n);}
+/* redondeo de catedra: incerteza a 1 cifra significativa, valor al mismo orden */
+function reportar(x,dx,u){
+  if(!(dx>0)||!isFinite(dx))return fmt(x,3)+(u?' '+u:'');
+  var e=Math.floor(Math.log10(dx)),p=Math.pow(10,e),d=Math.round(dx/p);
+  if(d>=10){d=1;e+=1;p=Math.pow(10,e);}
+  var dxr=d*p, xr=Math.round(x/p)*p, dec=Math.max(0,-e);
+  return xr.toFixed(dec)+' ± '+dxr.toFixed(dec)+(u?' '+u:'');
+}
+function pot10(x,dec){ // notacion x·10^n para textos
+  if(x===0)return '0';var e=Math.floor(Math.log10(Math.abs(x)));
+  return (x/Math.pow(10,e)).toFixed(dec===undefined?2:dec)+'·10<sup>'+e+'</sup>';}
+
+/* ---- azar y estadistica ---- */
+var _z2=null;
+function randn(){if(_z2!==null){var z=_z2;_z2=null;return z;}
+  var u=0,v=0;while(u===0)u=Math.random();while(v===0)v=Math.random();
+  var r=Math.sqrt(-2*Math.log(u));_z2=r*Math.sin(2*Math.PI*v);return r*Math.cos(2*Math.PI*v);}
+function mean(a){var s=0;for(var i=0;i<a.length;i++)s+=a[i];return s/a.length;}
+function sd(a,ddof){ddof=(ddof===undefined)?1:ddof;if(a.length<=ddof)return NaN;
+  var m=mean(a),s=0;for(var i=0;i<a.length;i++)s+=(a[i]-m)*(a[i]-m);return Math.sqrt(s/(a.length-ddof));}
+function linspace(a,b,n){var v=[];for(var i=0;i<n;i++)v.push(a+(b-a)*i/(n-1));return v;}
+function hist(d,nb,lo,hi){var c=new Array(nb).fill(0),w=(hi-lo)/nb;
+  for(var i=0;i<d.length;i++){var k=Math.floor((d[i]-lo)/w);if(k>=0&&k<nb)c[k]++;}
+  return{c:c,lo:lo,hi:hi,w:w};}
+function erf(x){var s=x<0?-1:1;x=Math.abs(x);
+  var a1=0.254829592,a2=-0.284496736,a3=1.421413741,a4=-1.453152027,a5=1.061405429,p=0.3275911;
+  var t=1/(1+p*x),y=1-(((((a5*t+a4)*t)+a3)*t+a2)*t+a1)*t*Math.exp(-x*x);return s*y;}
+function Phi(z){return 0.5*(1+erf(z/Math.SQRT2));}
+function gauss(x,mu,s){return Math.exp(-0.5*Math.pow((x-mu)/s,2))/(s*Math.sqrt(2*Math.PI));}
+/* Q(a,x)=gamma incompleta superior regularizada (Numerical Recipes) */
+function gammln(x){var c=[76.18009172947146,-86.50532032941677,24.01409824083091,
+  -1.231739572450155,0.1208650973866179e-2,-0.5395239384953e-5],y=x,t=x+5.5,s=1.000000000190015;
+  t-=(x+0.5)*Math.log(t);for(var j=0;j<6;j++)s+=c[j]/++y;return -t+Math.log(2.5066282746310005*s/x);}
+function gammq(a,x){if(x<0||a<=0)return NaN;
+  if(x<a+1){var ap=a,sum=1/a,del=sum;
+    for(var n=1;n<500;n++){ap++;del*=x/ap;sum+=del;if(Math.abs(del)<Math.abs(sum)*1e-12)break;}
+    return 1-sum*Math.exp(-x+a*Math.log(x)-gammln(a));}
+  var b=x+1-a,c0=1e300,d=1/b,h=d;
+  for(var i=1;i<500;i++){var an=-i*(i-a);b+=2;d=an*d+b;if(Math.abs(d)<1e-300)d=1e-300;
+    c0=b+an/c0;if(Math.abs(c0)<1e-300)c0=1e-300;d=1/d;var de=d*c0;h*=de;
+    if(Math.abs(de-1)<1e-12)break;}
+  return h*Math.exp(-x+a*Math.log(x)-gammln(a));}
+function pchi2(chi2,nu){return gammq(nu/2,chi2/2);}   /* p-valor (cola derecha) */
+
+/* ---- cuadrados minimos ---- */
+function ols(x,y){var n=x.length,mx=mean(x),my=mean(y),sxx=0,sxy=0,syy=0;
+  for(var i=0;i<n;i++){sxx+=(x[i]-mx)*(x[i]-mx);sxy+=(x[i]-mx)*(y[i]-my);syy+=(y[i]-my)*(y[i]-my);}
+  var b=sxy/sxx,a=my-b*mx,ss=0;
+  for(i=0;i<n;i++){var r=y[i]-(a+b*x[i]);ss+=r*r;}
+  var s2=ss/Math.max(1,n-2);
+  return{a:a,b:b,sa:Math.sqrt(s2*(1/n+mx*mx/sxx)),sb:Math.sqrt(s2/sxx),
+         r:sxy/Math.sqrt(sxx*syy),R2:1-ss/syy,sy:Math.sqrt(s2),ss:ss,n:n};}
+function wls(x,y,sy){var n=x.length,S=0,Sx=0,Sy=0,Sxx=0,Sxy=0;
+  for(var i=0;i<n;i++){var w=1/(sy[i]*sy[i]);S+=w;Sx+=w*x[i];Sy+=w*y[i];Sxx+=w*x[i]*x[i];Sxy+=w*x[i]*y[i];}
+  var D=S*Sxx-Sx*Sx,b=(S*Sxy-Sx*Sy)/D,a=(Sxx*Sy-Sx*Sxy)/D,chi2=0;
+  for(i=0;i<n;i++){var r=(y[i]-(a+b*x[i]))/sy[i];chi2+=r*r;}
+  var nu=n-2;
+  return{a:a,b:b,sa:Math.sqrt(Sxx/D),sb:Math.sqrt(S/D),chi2:chi2,nu:nu,
+         chi2r:chi2/nu,p:pchi2(chi2,nu)};}
+
+/* ============================== PLOT ============================== */
+function Plot(cv,opt){
+  opt=opt||{};
+  var p={cv:cv,ctx:cv.getContext('2d'),m:Object.assign({l:58,r:14,t:12,b:38},opt.m||{})};
+  p.resize=function(){var dpr=window.devicePixelRatio||1,w=cv.clientWidth,h=cv.clientHeight;
+    if(w<2||h<2)return;cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr);
+    p.ctx.setTransform(dpr,0,0,dpr,0,0);p.w=w;p.h=h;};
+  p.box=function(x0,x1,y0,y1){if(x1===x0){x1=x0+1;}if(y1===y0){y1=y0+1;}
+    p.x0=x0;p.x1=x1;p.y0=y0;p.y1=y1;return p;};
+  p.autoY=function(arr,pad){var lo=Infinity,hi=-Infinity;
+    for(var i=0;i<arr.length;i++){if(isFinite(arr[i])){lo=Math.min(lo,arr[i]);hi=Math.max(hi,arr[i]);}}
+    var d=(hi-lo)||Math.abs(hi)||1;pad=(pad===undefined)?0.08:pad;p.y0=lo-d*pad;p.y1=hi+d*pad;return p;};
+  p.X=function(x){return p.m.l+(x-p.x0)/(p.x1-p.x0)*(p.w-p.m.l-p.m.r);};
+  p.Y=function(y){return p.h-p.m.b-(y-p.y0)/(p.y1-p.y0)*(p.h-p.m.t-p.m.b);};
+  p.iX=function(px){return p.x0+(px-p.m.l)/(p.w-p.m.l-p.m.r)*(p.x1-p.x0);};
+  p.iY=function(py){return p.y0+(p.h-p.m.b-py)/(p.h-p.m.t-p.m.b)*(p.y1-p.y0);};
+  p.clear=function(){p.ctx.clearRect(0,0,p.w,p.h);
+    p.ctx.fillStyle='#fff';p.ctx.fillRect(0,0,p.w,p.h);return p;};
+  p.frame=function(xl,yl,o){o=o||{};var g=p.ctx,tx=ticks(p.x0,p.x1,o.nx||6),ty=ticks(p.y0,p.y1,o.ny||5);
+    g.save();g.lineWidth=1;g.font='12px system-ui,sans-serif';
+    if(o.grid!==false){g.strokeStyle='#eef2f5';g.beginPath();
+      tx.t.forEach(function(v){var X=Math.round(p.X(v))+.5;g.moveTo(X,p.m.t);g.lineTo(X,p.h-p.m.b);});
+      ty.t.forEach(function(v){var Y=Math.round(p.Y(v))+.5;g.moveTo(p.m.l,Y);g.lineTo(p.w-p.m.r,Y);});
+      g.stroke();}
+    g.strokeStyle=C.linea;g.strokeRect(p.m.l+.5,p.m.t+.5,p.w-p.m.l-p.m.r-1,p.h-p.m.t-p.m.b-1);
+    g.fillStyle=C.gris;g.textAlign='center';g.textBaseline='top';
+    tx.t.forEach(function(v){g.fillText(fmtTick(v,tx.step),p.X(v),p.h-p.m.b+6);});
+    g.textAlign='right';g.textBaseline='middle';
+    ty.t.forEach(function(v){g.fillText(fmtTick(v,ty.step),p.m.l-7,p.Y(v));});
+    g.fillStyle=C.tinta;g.font='13px system-ui,sans-serif';
+    if(xl){g.textAlign='center';g.textBaseline='bottom';g.fillText(xl,(p.m.l+p.w-p.m.r)/2,p.h-2);}
+    if(yl){g.save();g.translate(11,(p.m.t+p.h-p.m.b)/2);g.rotate(-Math.PI/2);
+      g.textAlign='center';g.textBaseline='top';g.fillText(yl,0,0);g.restore();}
+    g.restore();return p;};
+  p.clip=function(on){var g=p.ctx;if(on){g.save();g.beginPath();
+      g.rect(p.m.l,p.m.t,p.w-p.m.l-p.m.r,p.h-p.m.t-p.m.b);g.clip();}else{g.restore();}return p;};
+  p.line=function(xs,ys,o){o=o||{};var g=p.ctx;g.save();p.clip(true);
+    g.strokeStyle=o.c||C.azul;g.lineWidth=o.w||2;g.setLineDash(o.dash||[]);
+    g.beginPath();var st=false;
+    for(var i=0;i<xs.length;i++){if(!isFinite(ys[i])){st=false;continue;}
+      var X=p.X(xs[i]),Y=p.Y(ys[i]);if(!st){g.moveTo(X,Y);st=true;}else g.lineTo(X,Y);}
+    g.stroke();p.clip(false);g.restore();return p;};
+  p.pts=function(xs,ys,o){o=o||{};var g=p.ctx,r=o.r||3.5;g.save();p.clip(true);
+    g.fillStyle=o.c||C.rojo;g.strokeStyle=o.edge||'#fff';g.lineWidth=1;
+    for(var i=0;i<xs.length;i++){var X=p.X(xs[i]),Y=p.Y(ys[i]);
+      g.beginPath();g.arc(X,Y,r,0,6.2832);g.fill();if(o.edge!==false)g.stroke();}
+    p.clip(false);g.restore();return p;};
+  p.ebars=function(xs,ys,ey,ex,o){o=o||{};var g=p.ctx;g.save();p.clip(true);
+    g.strokeStyle=o.c||C.rojo;g.lineWidth=o.w||1.4;
+    for(var i=0;i<xs.length;i++){var X=p.X(xs[i]);
+      if(ey&&ey[i]>0){var Y1=p.Y(ys[i]-ey[i]),Y2=p.Y(ys[i]+ey[i]);
+        g.beginPath();g.moveTo(X,Y1);g.lineTo(X,Y2);g.moveTo(X-4,Y1);g.lineTo(X+4,Y1);
+        g.moveTo(X-4,Y2);g.lineTo(X+4,Y2);g.stroke();}
+      if(ex&&ex[i]>0){var Y=p.Y(ys[i]),X1=p.X(xs[i]-ex[i]),X2=p.X(xs[i]+ex[i]);
+        g.beginPath();g.moveTo(X1,Y);g.lineTo(X2,Y);g.moveTo(X1,Y-4);g.lineTo(X1,Y+4);
+        g.moveTo(X2,Y-4);g.lineTo(X2,Y+4);g.stroke();}}
+    p.clip(false);g.restore();return p;};
+  p.seg=function(x1,y1,x2,y2,o){o=o||{};var g=p.ctx;g.save();p.clip(true);
+    g.strokeStyle=o.c||C.gris;g.lineWidth=o.w||1.5;g.setLineDash(o.dash||[]);
+    g.beginPath();g.moveTo(p.X(x1),p.Y(y1));g.lineTo(p.X(x2),p.Y(y2));g.stroke();
+    p.clip(false);g.restore();return p;};
+  p.hline=function(y,o){return p.seg(p.x0,y,p.x1,y,o);};
+  p.vline=function(x,o){return p.seg(x,p.y0,x,p.y1,o);};
+  p.bars=function(h,o){o=o||{};var g=p.ctx,n=h.c.length,w=h.w;g.save();p.clip(true);
+    g.fillStyle=o.c||'rgba(27,73,101,.65)';g.strokeStyle=o.edge||'#fff';g.lineWidth=1;
+    for(var i=0;i<n;i++){if(h.c[i]<=0)continue;
+      var X1=p.X(h.lo+i*w),X2=p.X(h.lo+(i+1)*w),Y=p.Y(h.c[i]),Y0=p.Y(0);
+      g.fillRect(X1,Y,Math.max(1,X2-X1-1),Y0-Y);
+      if(X2-X1>3)g.strokeRect(X1,Y,Math.max(1,X2-X1-1),Y0-Y);}
+    p.clip(false);g.restore();return p;};
+  p.band=function(xs,lo,hi,o){o=o||{};var g=p.ctx;g.save();p.clip(true);
+    g.fillStyle=o.c||'rgba(27,73,101,.14)';g.beginPath();
+    g.moveTo(p.X(xs[0]),p.Y(lo[0]));
+    for(var i=1;i<xs.length;i++)g.lineTo(p.X(xs[i]),p.Y(lo[i]));
+    for(i=xs.length-1;i>=0;i--)g.lineTo(p.X(xs[i]),p.Y(hi[i]));
+    g.closePath();g.fill();p.clip(false);g.restore();return p;};
+  p.txt=function(x,y,s,o){o=o||{};var g=p.ctx;g.save();
+    g.fillStyle=o.c||C.tinta;g.font=o.font||'13px system-ui,sans-serif';
+    g.textAlign=o.align||'left';g.textBaseline=o.base||'bottom';
+    g.fillText(s,o.px?x:p.X(x),o.px?y:p.Y(y));g.restore();return p;};
+  p.resize();
+  return p;
+}
+/* re-dibujado en resize */
+var _redraws=[];
+function onResize(f){_redraws.push(f);}
+window.addEventListener('resize',function(){_redraws.forEach(function(f){f();});});
+
+/* control deslizante: devuelve valor y engancha el callback */
+function slider(id,cb){var s=$(id),v=$(id+'_v');
+  function upd(){if(v)v.textContent=s.dataset.fmt?
+      (+s.value).toFixed(+s.dataset.fmt):s.value;if(cb)cb();}
+  s.addEventListener('input',upd);upd();return s;}
+function val(id){return +$(id).value;}
+
+/* altura para iframes (WordPress) */
+function avisarAltura(){try{var h=document.documentElement.scrollHeight;
+  parent.postMessage({tipo:'altura-sim',alto:h,src:location.pathname},'*');}catch(e){}}
+window.addEventListener('load',function(){avisarAltura();setTimeout(avisarAltura,600);});
+window.addEventListener('resize',avisarAltura);
+
+
+var D=null;
+function generar(){
+  var n=Math.round(val('np')),h=val('het'),d=[];
+  for(var i=0;i<n;i++){var x=1+9*i/(n-1);
+    var s=0.25*Math.pow(h,(i%2===0?0:1)*(i/(n-1)))*(0.7+0.6*Math.random());
+    s=0.2+0.2*h*Math.pow(i/(n-1),1.5)*(0.7+0.6*Math.random());
+    d.push({x:x,s:s,y0:2+1.2*x});}
+  D={d:d};resim();
+}
+function resim(){
+  var cur=val('cur');
+  D.d.forEach(function(p){p.y=p.y0+cur*0.9*(p.x-5.5)*(p.x-5.5)/10+p.s*randn();});
+}
+function fits(){
+  var x=D.d.map(function(p){return p.x;}),y=D.d.map(function(p){return p.y;}),
+      s=D.d.map(function(p){return p.s*val('esc');});
+  return{o:ols(x,y),w:wls(x,y,s),x:x,y:y,s:s};
+}
+var pF=Plot($('cvF')),pR=Plot($('cvR'),{m:{l:58,r:14,t:10,b:40}});
+function dibF(){
+  var F=fits(),x=F.x,y=F.y,s=F.s;
+  pF.resize();pF.clear();
+  var lo=Math.min.apply(null,y.map(function(v,i){return v-s[i];})),
+      hi=Math.max.apply(null,y.map(function(v,i){return v+s[i];}));
+  pF.box(0,11,lo-0.5,hi+0.5).frame('x','y');
+  pF.line([0,11],[2,2+1.2*11],{c:C.gris,w:1.4,dash:[6,4]});
+  if($('chO').checked)pF.line([0,11],[F.o.a,F.o.a+F.o.b*11],{c:C.ocre,w:2});
+  pF.line([0,11],[F.w.a,F.w.a+F.w.b*11],{c:C.azul,w:2.5});
+  pF.ebars(x,y,s,null,{c:C.rojo});pF.pts(x,y,{c:C.rojo,r:4});
+  pF.txt(pF.m.l+10,pF.m.t+16,'ley verdadera: y = 2 + 1.2 x',{c:C.gris,px:true});
+  pF.txt(pF.m.l+10,pF.m.t+32,'ponderado',{c:C.azul,px:true});
+  if($('chO').checked)pF.txt(pF.m.l+10,pF.m.t+48,'sin pesos',{c:C.ocre,px:true});
+  /* residuos normalizados */
+  var rn=x.map(function(v,i){return (y[i]-(F.w.a+F.w.b*v))/s[i];});
+  pR.resize();pR.clear();
+  var m=Math.max(3.2,Math.max.apply(null,rn.map(Math.abs))*1.2);
+  pR.box(0,11,-m,m).frame('x','residuo normalizado  (y−f)/σ',{ny:4});
+  [-1,1].forEach(function(v){pR.hline(v,{c:C.linea,dash:[4,3]});});
+  pR.hline(0,{c:C.gris,dash:[5,4]});
+  pR.pts(x,rn,{c:C.rojo,r:4.5});
+  x.forEach(function(v,i){pR.seg(v,0,v,rn[i],{c:C.rojo,w:1.2});});
+  $('outF').innerHTML='<b>ponderado</b>: b = '+F.w.b.toFixed(3)+' ± '+F.w.sb.toFixed(3)+
+    ' · χ²<sub>red</sub> = '+F.w.chi2r.toFixed(2)+' (ν = '+F.w.nu+') · p = '+F.w.p.toFixed(3)+
+    ($('chO').checked?'<br><span style="color:var(--ocre)"><b>sin pesos</b>: b = '+F.o.b.toFixed(3)+
+      ' ± '+F.o.sb.toFixed(3)+' — su incerteza sale de la dispersión de los residuos, no de tus '+
+      'barras de error</span>':'')+
+    '<br>valor verdadero de la pendiente: <b>1.200</b>';
+  dibS(F);
+}
+/* ---------- histograma de chi2 ---------- */
+var pH=Plot($('cvH')),CH=[];
+function chi2pdf(x,k){if(x<=0)return 0;
+  return Math.exp((k/2-1)*Math.log(x)-x/2-(k/2)*Math.LN2-gammln(k/2));}
+function dibH(){
+  var F=fits();
+  pH.resize();pH.clear();
+  var nu=F.w.nu;
+  if(!CH.length){
+    var X=linspace(0.01,Math.max(4*nu,10),240),Y=X.map(function(v){return chi2pdf(v,nu);});
+    pH.box(0,X[X.length-1],0,Math.max.apply(null,Y)*1.25)
+      .frame('χ²','densidad de probabilidad (ν = '+nu+')');
+    pH.line(X,Y,{c:C.verde,w:2.5});
+    pH.vline(F.w.chi2,{c:C.rojo,w:2});
+    pH.txt(F.w.chi2,Math.max.apply(null,Y)*1.14,' tu χ²',{c:C.rojo});
+  } else {
+    var mx0=Math.max(4*nu,Math.max.apply(null,CH)),H=hist(CH,50,0,mx0),
+        mx=Math.max.apply(null,H.c);
+    pH.box(0,mx0,0,mx*1.25).frame('χ²','frecuencia (ν = '+nu+')');
+    pH.bars(H,{c:'rgba(27,73,101,.55)'});
+    var X2=linspace(0.01,mx0,240),Y2=X2.map(function(v){return CH.length*H.w*chi2pdf(v,nu);});
+    pH.line(X2,Y2,{c:C.verde,w:2.5});
+    pH.vline(F.w.chi2,{c:C.rojo,w:2});}
+  var v=F.w.chi2r,dg;
+  if(v>1.6)dg='<span style="color:var(--rojo)">modelo incompleto o incertezas subestimadas</span>';
+  else if(v<0.5)dg='<span style="color:var(--ocre)">incertezas sobreestimadas (o barras conservadoras)</span>';
+  else dg='<span style="color:var(--verde)">consistente con el modelo</span>';
+  $('outH').innerHTML='χ² = <b>'+F.w.chi2.toFixed(2)+'</b> con ν = '+nu+
+    ' → χ²<sub>red</sub> = <b>'+v.toFixed(2)+'</b> · p = <b>'+F.w.p.toFixed(4)+'</b> → '+dg+
+    '<br><span class="legend">La curva verde es la distribución teórica de χ² para ν grados de '+
+    'libertad: su media vale exactamente ν, y por eso se espera χ²<sub>red</sub> ≈ 1.</span>';
+}
+$('bh').onclick=function(){CH=[];var n=D.d.length,esc=val('esc'),cur=val('cur');
+  for(var k=0;k<3000;k++){var x=[],y=[],s=[];
+    D.d.forEach(function(p){x.push(p.x);s.push(p.s*esc);
+      y.push(p.y0+cur*0.9*(p.x-5.5)*(p.x-5.5)/10+p.s*randn());});
+    CH.push(wls(x,y,s).chi2);}
+  dibH();};
+
+/* ---------- absolute_sigma ---------- */
+function dibS(F){
+  var k=Math.sqrt(F.w.chi2r);
+  var html='<tr><th>llamada a curve_fit</th><th>Δb reportado</th><th>χ²<sub>red</sub> visible</th>'+
+    '<th>¿sirve para diagnosticar?</th></tr>'+
+    '<tr><td><code>absolute_sigma=True</code></td><td><b>'+F.w.sb.toFixed(4)+
+    '</b></td><td>'+F.w.chi2r.toFixed(2)+'</td><td style="text-align:right;color:var(--verde)">sí</td></tr>'+
+    '<tr><td><code>absolute_sigma=False</code> (default)</td><td><b>'+(F.w.sb*k).toFixed(4)+
+    '</b></td><td>1.00 por construcción</td><td style="text-align:right;color:var(--rojo)">no</td></tr>'+
+    '<tr><td>sin barras de error (OLS)</td><td>'+F.o.sb.toFixed(4)+
+    '</td><td>—</td><td style="text-align:right;color:var(--ocre)">sólo residuos</td></tr>';
+  $('tabS').innerHTML=html;
+  $('outS').innerHTML='El factor de reescaleo es √χ²<sub>red</sub> = <b>'+k.toFixed(2)+
+    '</b>: con estas incertezas, el default de scipy '+
+    (k>1.05?'<b>agranda</b>':(k<0.95?'<b>achica</b>':'casi no cambia'))+
+    ' tus incertezas de los parámetros en un '+Math.abs(100*(k-1)).toFixed(0)+' %.';
+}
+/* ---------- promedio ponderado ---------- */
+var pP=Plot($('cvP'),{m:{l:66,r:18,t:14,b:42}}),GG=[];
+function nuevosG(){GG=[];var v=9.797;
+  for(var i=0;i<8;i++){var s=0.01+0.09*Math.random();GG.push({x:v+s*randn(),s:s});}}
+function dibP(){
+  pP.resize();pP.clear();
+  var S=0,Sx=0;GG.forEach(function(r){var w=1/(r.s*r.s);S+=w;Sx+=w*r.x;});
+  var mp=Sx/S,dmp=1/Math.sqrt(S);
+  var ms=mean(GG.map(function(r){return r.x;})),dss=sd(GG.map(function(r){return r.x;}))/Math.sqrt(GG.length);
+  var lo=Math.min.apply(null,GG.map(function(r){return r.x-r.s;}))-0.02,
+      hi=Math.max.apply(null,GG.map(function(r){return r.x+r.s;}))+0.02;
+  pP.box(lo,hi,-1.8,7.7).frame('g medido [m/s²]','grupo',{ny:4});
+  GG.forEach(function(r,i){pP.ebars([r.x],[i],null,[r.s],{c:C.azul,w:2});
+    pP.pts([r.x],[i],{c:C.azul,r:4.5});});
+  pP.ebars([mp],[-1.1],null,[dmp],{c:C.rojo,w:2.5});pP.pts([mp],[-1.1],{c:C.rojo,r:6});
+  pP.txt(pP.m.l-8,pP.Y(-1.1)+5,'ponderado',{c:C.rojo,align:'right',px:true});
+  pP.ebars([ms],[-1.7],null,[dss],{c:C.ocre,w:2});pP.pts([ms],[-1.7],{c:C.ocre,r:5});
+  pP.txt(pP.m.l-8,pP.Y(-1.7)+5,'simple',{c:C.ocre,align:'right',px:true});
+  pP.vline(9.797,{c:C.verde,w:1.6,dash:[5,4]});
+  var mejor=Math.min.apply(null,GG.map(function(r){return r.s;}));
+  $('outP').innerHTML='promedio <b>ponderado</b>: '+reportar(mp,dmp,'m/s²')+
+    ' &nbsp;·&nbsp; promedio <b>simple</b>: '+reportar(ms,dss,'m/s²')+'<br>'+
+    'La incerteza del ponderado ('+dmp.toFixed(4)+') es menor que la del mejor grupo individual ('+
+    mejor.toFixed(4)+'): combinar mediciones independientes siempre agrega información. '+
+    'Y el promedio simple le da el mismo peso al grupo que midió mal que al que midió bien.';
+}
+$('bp').onclick=function(){nuevosG();dibP();};
+['het','np'].forEach(function(id){slider(id,function(){generar();dibF();CH=[];dibH();});});
+['esc','cur'].forEach(function(id){slider(id,function(){resim();dibF();CH=[];dibH();});});
+$('bn').onclick=function(){generar();dibF();CH=[];dibH();};
+$('chO').onchange=dibF;
+onResize(function(){dibF();dibH();dibP();});
+generar();dibF();dibH();nuevosG();dibP();
+
+</script>
+</body>
+</html>

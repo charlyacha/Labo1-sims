@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Distribuciones y procesos aleatorios · Labo 1 (Cátedra Acha)</title>
+<style>
+:root{--tinta:#16222c;--gris:#5b6b76;--linea:#d7dee3;--panel:#f5f8fa;--azul:#1b4965;--rojo:#c1444f;--verde:#1f8a70;--ocre:#c98a1e;--violeta:#6a4c93}
+*{box-sizing:border-box}body{margin:0;color:var(--tinta);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;font-size:16px;line-height:1.55}.wrap{max-width:920px;margin:auto;padding:18px 16px 48px}header{border-bottom:3px solid var(--azul);padding-bottom:10px;margin-bottom:18px}.depto{font-size:12px;color:var(--gris);margin:0 0 7px}.tag{display:inline-block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#fff;background:var(--azul);padding:3px 9px;border-radius:999px}h1{font-size:1.5rem;margin:.5rem 0 .2rem;line-height:1.25}h2{font-size:1.12rem;margin:1.9rem 0 .5rem;color:var(--azul);border-left:4px solid var(--azul);padding-left:9px}p.sub,.legend{color:var(--gris)}.card{background:var(--panel);border:1px solid var(--linea);border-radius:10px;padding:14px;margin:14px 0}.ctrl{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px 18px}.ctrl label{display:block;font-size:13px;color:var(--gris)}.val{float:right;color:var(--tinta);font-weight:600;font-variant-numeric:tabular-nums}input[type=range]{width:100%;accent-color:var(--azul)}canvas{display:block;width:100%;height:280px;background:#fff;border:1px solid var(--linea);border-radius:8px}.clave,.nota{padding:10px 12px;border-radius:0 8px 8px 0;margin:14px 0;font-size:14.5px}.clave{border-left:4px solid var(--verde);background:#eef8f5}.nota{border-left:4px solid var(--ocre);background:#fdf8ec}.consigna{background:#fff;border:1px dashed var(--azul);border-radius:8px;padding:10px 12px;margin:14px 0;font-size:14.5px}button{font:inherit;font-size:14px;padding:7px 14px;border-radius:8px;border:1px solid var(--azul);background:var(--azul);color:#fff;cursor:pointer}.out{font-size:14px;font-variant-numeric:tabular-nums}.legend{font-size:13px;margin-top:6px}.sw{display:inline-block;width:12px;height:4px;vertical-align:3px;margin:0 4px 0 10px}footer{margin-top:34px;padding-top:12px;border-top:1px solid var(--linea);color:var(--gris);font-size:13px}a{color:var(--azul)}
+</style>
+</head>
+<body><div class="wrap">
+<header><p class="depto">Laboratorio 1 · Cátedra Acha · Departamento de Física, FCEyN, UBA</p><span class="tag">Estadística · Labo 1</span><h1>Distribuciones y procesos aleatorios</h1><p class="sub">Una distribución no es solamente una curva: resume qué resultados produce un proceso y con qué frecuencia.</p></header>
+
+<p>En estos cuatro experimentos numéricos, los datos se generan mediante reglas sencillas. Mové los controles y compará el histograma de una realización con la ley teórica. El acuerdo no es exacto para una muestra finita: las fluctuaciones entre realizaciones también son parte del fenómeno.</p>
+
+<h2>1 · Gaussiana: suma de muchas contribuciones pequeñas</h2>
+<p>Imaginemos que el resultado recibe varios aportes independientes, positivos o negativos: pequeñas variaciones de lectura, alineación o ambiente. Al sumarlos y estandarizar el resultado, la forma suele acercarse a una gaussiana aunque cada aporte individual no lo sea.</p>
+<div class="card"><div class="ctrl">
+  <div><label>Aportes por medición <span class="val" id="ngv"></span></label><input id="ng" type="range" min="1" max="40" value="2"></div>
+  <div><label>Cantidad de mediciones <span class="val" id="mgv"></span></label><input id="mg" type="range" min="100" max="5000" step="100" value="1200"></div>
+</div><canvas id="cg"></canvas><div class="legend"><span class="sw" style="background:#1b4965"></span>simulación <span class="sw" style="background:#1f8a70"></span>gaussiana de referencia</div><p class="out" id="og"></p></div>
+
+<h2>2 · Poisson: contar eventos en un intervalo</h2>
+<p>La distribución de Poisson aparece al contar eventos independientes que ocurren con una tasa aproximadamente constante: desintegraciones en un intervalo, fotones detectados o llegadas a un sensor. Su parámetro λ es la cantidad media esperada por intervalo; también fija la varianza.</p>
+<div class="card"><div class="ctrl">
+  <div><label>Promedio por intervalo, λ <span class="val" id="lpv"></span></label><input id="lp" type="range" min="0.3" max="20" step="0.1" value="3"></div>
+  <div><label>Cantidad de intervalos <span class="val" id="mpv"></span></label><input id="mp" type="range" min="100" max="5000" step="100" value="1200"></div>
+</div><canvas id="cp"></canvas><div class="legend"><span class="sw" style="background:#1b4965"></span>simulación <span class="sw" style="background:#c1444f"></span>probabilidad de Poisson</div><p class="out" id="op"></p></div>
+
+<h2>3 · Bimodal: una mezcla de dos poblaciones</h2>
+<p>Dos máximos pueden aparecer cuando juntamos datos de dos poblaciones o de dos regímenes: por ejemplo, dos estados de funcionamiento de un equipo. No toda mezcla muestra dos picos bien separados; eso depende de la separación, la dispersión y la proporción de cada grupo.</p>
+<div class="card"><div class="ctrl">
+  <div><label>Separación entre medias <span class="val" id="dbv"></span></label><input id="db" type="range" min="0" max="6" step="0.1" value="3"></div>
+  <div><label>Proporción del grupo A <span class="val" id="wbv"></span></label><input id="wb" type="range" min="0.05" max="0.95" step="0.05" value="0.5"></div>
+  <div><label>Dispersión de cada grupo <span class="val" id="sbv"></span></label><input id="sb" type="range" min="0.3" max="2" step="0.1" value="0.8"></div>
+</div><canvas id="cb"></canvas><div class="legend"><span class="sw" style="background:#1b4965"></span>simulación <span class="sw" style="background:#6a4c93"></span>mezcla teórica</div><p class="out" id="ob"></p></div>
+
+<h2>4 · Exponencial: cuánto hay que esperar</h2>
+<p>Si los eventos siguen un proceso de Poisson, el tiempo hasta el próximo evento tiene distribución exponencial. Los intervalos cortos son más frecuentes, pero también pueden aparecer esperas largas. El modelo supone una tasa estable y que el proceso no “recuerda” cuánto esperamos.</p>
+<div class="card"><div class="ctrl">
+  <div><label>Tasa de eventos, λ <span class="val" id="lev"></span></label><input id="le" type="range" min="0.2" max="3" step="0.1" value="1"></div>
+  <div><label>Cantidad de esperas <span class="val" id="mev"></span></label><input id="me" type="range" min="100" max="5000" step="100" value="1200"></div>
+</div><canvas id="ce"></canvas><div class="legend"><span class="sw" style="background:#1b4965"></span>simulación <span class="sw" style="background:#c98a1e"></span>exponencial teórica</div><p class="out" id="oe"></p></div>
+
+<div class="clave"><b>La idea central.</b> La ley estadística no reemplaza al mecanismo: es un modelo de sus resultados. Para elegirla hay que mirar cómo se generan los datos, qué supuestos requiere y si las observaciones son compatibles con esos supuestos.</div>
+<div class="nota">Una misma forma puede surgir en contextos distintos, y un proceso real puede apartarse del modelo por correlaciones, cambios de régimen, límites instrumentales o una tasa que varía con el tiempo.</div>
+<div class="consigna"><b>Para explorar.</b> (a) ¿Cuántos aportes hacen falta para que la suma se parezca a una gaussiana? (b) En Poisson, compará la media y la varianza. (c) ¿Cuándo deja de distinguirse la mezcla bimodal? (d) ¿Qué observación pondría en duda una tasa constante?</div>
+<footer><b>Laboratorio 1 — Cátedra Acha</b> · Departamento de Física, FCEyN-UBA · Todo corre en tu navegador: no se envía ningún dato.</footer>
+</div>
+<script>
+const C={azul:'#1b4965',rojo:'#c1444f',verde:'#1f8a70',ocre:'#c98a1e',violeta:'#6a4c93',gris:'#5b6b76',linea:'#d7dee3',tinta:'#16222c'};
+const $=id=>document.getElementById(id); let spare=null;
+function randn(){if(spare!==null){let z=spare;spare=null;return z}let u=0,v=0;while(!u)u=Math.random();while(!v)v=Math.random();let r=Math.sqrt(-2*Math.log(u));spare=r*Math.sin(2*Math.PI*v);return r*Math.cos(2*Math.PI*v)}
+function poisson(l){let L=Math.exp(-l),p=1,k=0;do{k++;p*=Math.random()}while(p>L);return k-1}
+function stats(a){let m=a.reduce((s,x)=>s+x,0)/a.length,v=a.reduce((s,x)=>s+(x-m)*(x-m),0)/(a.length-1);return[m,v]}
+function prep(cv){let d=devicePixelRatio||1,w=cv.clientWidth,h=cv.clientHeight;cv.width=w*d;cv.height=h*d;let g=cv.getContext('2d');g.setTransform(d,0,0,d,0,0);return[g,w,h]}
+function plot(id,data,lo,hi,bins,pdf,color,discrete){let [g,w,h]=prep($(id)),L=42,R=12,T=12,B=34,pw=w-L-R,ph=h-T-B,c=Array(bins).fill(0),bw=(hi-lo)/bins;data.forEach(x=>{let k=Math.floor((x-lo)/bw);if(k>=0&&k<bins)c[k]++});let ymax=Math.max(...c)/(data.length*bw);for(let i=0;i<=160;i++){let x=lo+(hi-lo)*i/160;ymax=Math.max(ymax,pdf(x))}ymax*=1.12;g.strokeStyle=C.linea;g.beginPath();g.moveTo(L,T);g.lineTo(L,T+ph);g.lineTo(L+pw,T+ph);g.stroke();g.fillStyle=C.azul+'bb';c.forEach((n,i)=>{let den=n/(data.length*bw),x=L+i*pw/bins,barW=Math.max(1,pw/bins-1);g.fillRect(x,T+ph-den/ymax*ph,barW,den/ymax*ph)});g.strokeStyle=color;g.lineWidth=2;g.beginPath();for(let i=0;i<=240;i++){let x=lo+(hi-lo)*i/240,y=pdf(x),px=L+i*pw/240,py=T+ph-y/ymax*ph;i?g.lineTo(px,py):g.moveTo(px,py)}g.stroke();g.fillStyle=C.gris;g.font='12px sans-serif';g.textAlign='center';for(let i=0;i<=5;i++){let x=lo+(hi-lo)*i/5,px=L+pw*i/5;g.fillText((discrete?Math.round(x):x.toFixed(1)),px,h-10)}g.save();g.translate(13,T+ph/2);g.rotate(-Math.PI/2);g.fillText('densidad / frecuencia',0,0);g.restore()}
+function normal(x,m,s){return Math.exp(-.5*((x-m)/s)**2)/(s*Math.sqrt(2*Math.PI))}
+function factorial(n){let f=1;for(let i=2;i<=n;i++)f*=i;return f}
+function renderG(){let n=+$('ng').value,M=+$('mg').value,a=[];for(let j=0;j<M;j++){let s=0;for(let i=0;i<n;i++)s+=2*Math.random()-1;a.push(s/Math.sqrt(n/3))}$('ngv').textContent=n;$('mgv').textContent=M;plot('cg',a,-4,4,32,x=>normal(x,0,1),C.verde,false);let q=stats(a);$('og').innerHTML='Media muestral = <b>'+q[0].toFixed(2)+'</b> · varianza muestral = <b>'+q[1].toFixed(2)+'</b>.'}
+function renderP(){let l=+$('lp').value,M=+$('mp').value,a=Array.from({length:M},()=>poisson(l)),hi=Math.max(8,Math.ceil(l+4*Math.sqrt(l))),bw=1;$('lpv').textContent=l.toFixed(1);$('mpv').textContent=M;plot('cp',a,-.5,hi+.5,hi+1,x=>{let k=Math.round(x);return k>=0&&Math.abs(x-k)<.52?Math.exp(-l)*l**k/factorial(k):0},C.rojo,true);let q=stats(a);$('op').innerHTML='Media muestral = <b>'+q[0].toFixed(2)+'</b> · varianza muestral = <b>'+q[1].toFixed(2)+'</b> · el modelo predice ambas ≈ λ.'}
+function renderB(){let d=+$('db').value,w=+$('wb').value,s=+$('sb').value,M=1600,a=Array.from({length:M},()=>randn()*s+(Math.random()<w?-d/2:d/2));$('dbv').textContent=d.toFixed(1);$('wbv').textContent=Math.round(100*w)+' %';$('sbv').textContent=s.toFixed(1);let lo=-5,hi=5;plot('cb',a,lo,hi,36,x=>w*normal(x,-d/2,s)+(1-w)*normal(x,d/2,s),C.violeta,false);$('ob').innerHTML='Medias de los grupos: <b>'+(-d/2).toFixed(1)+'</b> y <b>'+(d/2).toFixed(1)+'</b>. Probá reducir la separación o hacer minoritario uno de los grupos.'}
+function renderE(){let l=+$('le').value,M=+$('me').value,a=Array.from({length:M},()=>-Math.log(1-Math.random())/l),hi=6/l;$('lev').textContent=l.toFixed(1);$('mev').textContent=M;plot('ce',a,0,hi,34,x=>l*Math.exp(-l*x),C.ocre,false);let q=stats(a);$('oe').innerHTML='Espera media muestral = <b>'+q[0].toFixed(2)+'</b> · el modelo predice 1/λ = <b>'+(1/l).toFixed(2)+'</b>.'}
+[['ng',renderG],['mg',renderG],['lp',renderP],['mp',renderP],['db',renderB],['wb',renderB],['sb',renderB],['le',renderE],['me',renderE]].forEach(([id,f])=>$(id).addEventListener('input',f));window.addEventListener('resize',()=>{renderG();renderP();renderB();renderE()});renderG();renderP();renderB();renderE();
+</script></body></html>
