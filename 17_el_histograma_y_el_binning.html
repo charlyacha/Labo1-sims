@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>El histograma miente (y vos elegís cómo) · Labo 1 (Cátedra Acha)</title>
+<style>
+:root{
+  --tinta:#16222c; --gris:#5b6b76; --linea:#d7dee3; --fondo:#ffffff; --panel:#f5f8fa;
+  --azul:#1b4965; --rojo:#c1444f; --verde:#1f8a70; --ocre:#c98a1e; --violeta:#6a4c93;
+  --radio:10px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fondo);color:var(--tinta);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  font-size:16px;line-height:1.55}
+.wrap{max-width:920px;margin:0 auto;padding:18px 16px 48px}
+header.top{border-bottom:3px solid var(--azul);padding-bottom:10px;margin-bottom:18px}
+.tag{display:inline-block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;
+  color:#fff;background:var(--azul);padding:3px 9px;border-radius:999px}
+h1{font-size:1.5rem;margin:.5rem 0 .2rem;line-height:1.25}
+h2{font-size:1.12rem;margin:1.9rem 0 .5rem;color:var(--azul);
+   border-left:4px solid var(--azul);padding-left:9px}
+h3{font-size:1rem;margin:1.2rem 0 .3rem;color:var(--gris)}
+p.sub{color:var(--gris);margin:.2rem 0 0}
+.card{background:var(--panel);border:1px solid var(--linea);border-radius:var(--radio);
+  padding:14px;margin:14px 0}
+.card.blanco{background:#fff}
+.ctrl{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px 18px;margin:6px 0 2px}
+.ctrl label{display:block;font-size:13px;color:var(--gris);margin-bottom:2px}
+.ctrl .val{float:right;font-variant-numeric:tabular-nums;color:var(--tinta);font-weight:600}
+input[type=range]{width:100%;accent-color:var(--azul);margin:0}
+select,input[type=number]{width:100%;padding:5px 7px;border:1px solid var(--linea);
+  border-radius:6px;background:#fff;color:var(--tinta);font-size:14px}
+.btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+button{font:inherit;font-size:14px;padding:7px 14px;border-radius:8px;border:1px solid var(--azul);
+  background:var(--azul);color:#fff;cursor:pointer}
+button.sec{background:#fff;color:var(--azul)}
+button:active{transform:translateY(1px)}
+button[disabled]{opacity:.45;cursor:default}
+label.chk{font-size:14px;color:var(--tinta);display:inline-flex;align-items:center;gap:6px;
+  margin-right:14px;cursor:pointer}
+canvas{display:block;width:100%;background:#fff;border:1px solid var(--linea);
+  border-radius:8px;touch-action:none}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:640px){.grid2{grid-template-columns:1fr}}
+.out{font-variant-numeric:tabular-nums;font-size:14px}
+.out b{font-weight:600}
+table{border-collapse:collapse;width:100%;font-size:14px;margin-top:8px}
+th,td{border-bottom:1px solid var(--linea);padding:5px 7px;text-align:right}
+th:first-child,td:first-child{text-align:left}
+th{color:var(--gris);font-weight:600;font-size:12.5px;text-transform:uppercase;letter-spacing:.03em}
+.depto{font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--gris);
+  font-weight:700;margin:0 0 8px}
+details.resp{border:1px solid var(--linea);border-radius:8px;background:#fff;margin:8px 0;padding:0}
+details.resp>summary{cursor:pointer;padding:8px 12px;font-size:14px;font-weight:600;color:var(--azul);
+  list-style:none;display:flex;align-items:center;gap:8px}
+details.resp>summary::-webkit-details-marker{display:none}
+details.resp>summary::before{content:"\25B8";font-size:12px;color:var(--gris);transition:transform .15s}
+details.resp[open]>summary::before{transform:rotate(90deg)}
+details.resp>div{padding:2px 14px 12px;font-size:14.5px}
+details.resp.corta>summary{color:var(--verde)}
+details.resp.corta{border-left:4px solid var(--verde)}
+details.resp.larga{border-left:4px solid var(--azul)}
+.preg{margin:22px 0 6px;font-size:15.5px}
+.preg b{color:var(--azul)}
+.volver{font-size:14px}
+.nota{border-left:4px solid var(--ocre);background:#fdf8ec;padding:10px 12px;border-radius:0 8px 8px 0;
+  margin:14px 0;font-size:14.5px}
+.clave{border-left:4px solid var(--verde);background:#eef8f5;padding:10px 12px;border-radius:0 8px 8px 0;
+  margin:14px 0;font-size:14.5px}
+.aviso{border-left:4px solid var(--rojo);background:#fbeff0;padding:10px 12px;border-radius:0 8px 8px 0;
+  margin:14px 0;font-size:14.5px}
+.consigna{background:#fff;border:1px dashed var(--azul);border-radius:8px;padding:10px 12px;margin:14px 0;font-size:14.5px}
+.consigna b{color:var(--azul)}
+code{background:#eef2f5;padding:1px 5px;border-radius:4px;font-size:.9em}
+footer{margin-top:34px;padding-top:12px;border-top:1px solid var(--linea);
+  color:var(--gris);font-size:13px}
+a{color:var(--azul)}
+.legend{font-size:13px;color:var(--gris);margin-top:6px}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:2px;margin-right:4px;vertical-align:-1px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top">
+  <p class="depto">Laboratorio 1 · Cátedra Acha · Departamento de Física, FCEyN, UBA</p>
+  <span class="tag">Herramientas de análisis</span>
+  <h1>El histograma miente (y vos elegís cómo)</h1>
+  <p class="sub">Ancho de intervalo, origen del primer borde, reglas automáticas y la acumulada sin parámetros.</p>
+</header>
+
+<p>El histograma es la primera figura que casi todos hacen y la que menos nadie piensa. Tiene dos
+parámetros arbitrarios — el ancho de los intervalos y dónde empieza el primero — que <b>vos</b>
+elegís y que no están en los datos. Con los mismos números podés mostrar una campana o dos jorobas.
+Esta página es para que veas hasta dónde llega ese margen.</p>
+
+<h2>1 · Los mismos datos, distintos anchos</h2>
+<div class="card">
+  <div class="ctrl">
+    <div><label for="dist">Distribución madre</label>
+      <select id="dist">
+        <option value="g" selected>gaussiana</option>
+        <option value="b">bimodal (dos poblaciones)</option>
+        <option value="e">exponencial</option>
+        <option value="r">tiempos de reacción (asimétrica)</option>
+        <option value="u">uniforme</option>
+      </select></div>
+    <div><label for="N">Número de datos N <span class="val" id="N_v"></span></label>
+      <input type="range" id="N" min="20" max="2000" step="10" value="200" data-fmt="0"></div>
+    <div><label for="nb">Cantidad de intervalos <span class="val" id="nb_v"></span></label>
+      <input type="range" id="nb" min="3" max="80" step="1" value="12" data-fmt="0"></div>
+    <div><label for="sh">Corrimiento del primer borde [%] <span class="val" id="sh_v"></span></label>
+      <input type="range" id="sh" min="0" max="100" step="2" value="0" data-fmt="0"></div>
+  </div>
+  <canvas id="cvH" style="height:320px"></canvas>
+  <div class="btns"><button id="bn">Nueva muestra</button>
+    <label class="chk"><input type="checkbox" id="chD" checked> densidad verdadera</label></div>
+  <p class="out" id="outH"></p>
+</div>
+<div class="aviso">
+Poné la bimodal con N = 200 y movete entre 6 y 40 intervalos. Con pocos, las dos poblaciones se
+funden en una sola joroba y el histograma <b>miente por defecto</b>. Con demasiados, cada intervalo
+tiene dos o tres cuentas y aparecen picos que son puro ruido de Poisson: el histograma
+<b>miente por exceso</b>. En el medio hay una ventana donde la figura dice la verdad, y no hay
+manera de encontrarla sin pensar.
+</div>
+
+<h2>2 · Las reglas: qué proponen y cuándo fallan</h2>
+<div class="card blanco">
+  <table id="tabR"></table>
+  <p class="legend">Ninguna es una ley: son puntos de partida razonables. Freedman–Diaconis usa el
+  rango intercuartil en vez de s, así que no se rompe con colas largas ni con un outlier.</p>
+  <canvas id="cvC" style="height:290px"></canvas>
+  <p class="out" id="outC"></p>
+</div>
+
+<h2>3 · Sin binning: la acumulada empírica</h2>
+<p>La ECDF no tiene parámetros libres. Cada dato aporta un escalón, y no hay nada que elegir. Es
+menos intuitiva de leer, pero es la representación honesta cuando la forma está en discusión.</p>
+<div class="card">
+  <canvas id="cvE" style="height:300px"></canvas>
+  <p class="out" id="outE"></p>
+</div>
+<div class="clave">
+En un informe: si el histograma es sólo ilustrativo, elegí un ancho razonable y seguí. Si estás
+<b>afirmando algo sobre la forma</b> —que es gaussiana, que es bimodal, que hay una cola—, mostrá
+que la conclusión sobrevive a cambiar el ancho, o usá la acumulada. Y declará siempre N y el
+ancho: un histograma sin esos dos datos no es reproducible.
+</div>
+
+<div class="consigna">
+<b>Para pensar antes, durante y después de la clase.</b> (a) Con N = 20, ¿cuántos intervalos
+podés usar antes de que la figura sea sólo ruido? (b) Movés el borde del primer intervalo sin
+cambiar el ancho: ¿puede eso cambiar tu conclusión? ¿Debería? (c) ¿Por qué la fluctuación
+relativa de cada barra vale 1/√(cuentas) y qué implica para las colas? (d) ¿En qué caso preferirías
+la acumulada al histograma para presentar tus tiempos de reacción?
+<br><a href="respuestas_17.html">Respuestas comentadas &rarr;</a>
+</div>
+
+<footer>
+  <b>Laboratorio 1 — Cátedra Acha</b> · Departamento de Física, FCEyN-UBA ·
+  Simulación interactiva de uso libre para el curso. Todo corre en tu navegador: no se envía ningún dato.
+</footer>
+</div>
+<script>
+/* ============ kit minimo de graficos + estadistica (Labo 1, Catedra Acha) ============ */
+var C={azul:'#1b4965',rojo:'#c1444f',verde:'#1f8a70',ocre:'#c98a1e',violeta:'#6a4c93',
+       gris:'#5b6b76',linea:'#d7dee3',tinta:'#16222c'};
+
+function $(id){return document.getElementById(id);}
+function el(t,a){var e=document.createElement(t);for(var k in (a||{}))e[k]=a[k];return e;}
+
+/* ---- numeros ---- */
+function nice(x,round){var e=Math.floor(Math.log10(x)),f=x/Math.pow(10,e),nf;
+  if(round){nf=f<1.5?1:(f<3?2:(f<7?5:10));}else{nf=f<=1?1:(f<=2?2:(f<=5?5:10));}
+  return nf*Math.pow(10,e);}
+function ticks(a,b,n){if(!(b>a))return{t:[a],step:1};
+  var step=nice((b-a)/Math.max(1,n-1),true),s=Math.ceil(a/step-1e-9)*step,t=[];
+  for(var v=s;v<=b+step*1e-6;v+=step)t.push(Math.abs(v)<step*1e-9?0:v);
+  return{t:t,step:step};}
+function fmtTick(v,step){var a=Math.abs(v);
+  if(a!==0&&(a>=1e5||a<1e-4))return v.toExponential(1);
+  var d=Math.max(0,-Math.floor(Math.log10(step)+1e-9));return v.toFixed(Math.min(d,6));}
+function fmt(x,n){if(!isFinite(x))return '—';return x.toFixed(n===undefined?2:n);}
+/* redondeo de catedra: incerteza a 1 cifra significativa, valor al mismo orden */
+function reportar(x,dx,u){
+  if(!(dx>0)||!isFinite(dx))return fmt(x,3)+(u?' '+u:'');
+  var e=Math.floor(Math.log10(dx)),p=Math.pow(10,e),d=Math.round(dx/p);
+  if(d>=10){d=1;e+=1;p=Math.pow(10,e);}
+  var dxr=d*p, xr=Math.round(x/p)*p, dec=Math.max(0,-e);
+  return xr.toFixed(dec)+' ± '+dxr.toFixed(dec)+(u?' '+u:'');
+}
+function pot10(x,dec){ // notacion x·10^n para textos
+  if(x===0)return '0';var e=Math.floor(Math.log10(Math.abs(x)));
+  return (x/Math.pow(10,e)).toFixed(dec===undefined?2:dec)+'·10<sup>'+e+'</sup>';}
+
+/* ---- azar y estadistica ---- */
+var _z2=null;
+function randn(){if(_z2!==null){var z=_z2;_z2=null;return z;}
+  var u=0,v=0;while(u===0)u=Math.random();while(v===0)v=Math.random();
+  var r=Math.sqrt(-2*Math.log(u));_z2=r*Math.sin(2*Math.PI*v);return r*Math.cos(2*Math.PI*v);}
+function mean(a){var s=0;for(var i=0;i<a.length;i++)s+=a[i];return s/a.length;}
+function sd(a,ddof){ddof=(ddof===undefined)?1:ddof;if(a.length<=ddof)return NaN;
+  var m=mean(a),s=0;for(var i=0;i<a.length;i++)s+=(a[i]-m)*(a[i]-m);return Math.sqrt(s/(a.length-ddof));}
+function linspace(a,b,n){var v=[];for(var i=0;i<n;i++)v.push(a+(b-a)*i/(n-1));return v;}
+function hist(d,nb,lo,hi){var c=new Array(nb).fill(0),w=(hi-lo)/nb;
+  for(var i=0;i<d.length;i++){var k=Math.floor((d[i]-lo)/w);if(k>=0&&k<nb)c[k]++;}
+  return{c:c,lo:lo,hi:hi,w:w};}
+function erf(x){var s=x<0?-1:1;x=Math.abs(x);
+  var a1=0.254829592,a2=-0.284496736,a3=1.421413741,a4=-1.453152027,a5=1.061405429,p=0.3275911;
+  var t=1/(1+p*x),y=1-(((((a5*t+a4)*t)+a3)*t+a2)*t+a1)*t*Math.exp(-x*x);return s*y;}
+function Phi(z){return 0.5*(1+erf(z/Math.SQRT2));}
+function gauss(x,mu,s){return Math.exp(-0.5*Math.pow((x-mu)/s,2))/(s*Math.sqrt(2*Math.PI));}
+/* Q(a,x)=gamma incompleta superior regularizada (Numerical Recipes) */
+function gammln(x){var c=[76.18009172947146,-86.50532032941677,24.01409824083091,
+  -1.231739572450155,0.1208650973866179e-2,-0.5395239384953e-5],y=x,t=x+5.5,s=1.000000000190015;
+  t-=(x+0.5)*Math.log(t);for(var j=0;j<6;j++)s+=c[j]/++y;return -t+Math.log(2.5066282746310005*s/x);}
+function gammq(a,x){if(x<0||a<=0)return NaN;
+  if(x<a+1){var ap=a,sum=1/a,del=sum;
+    for(var n=1;n<500;n++){ap++;del*=x/ap;sum+=del;if(Math.abs(del)<Math.abs(sum)*1e-12)break;}
+    return 1-sum*Math.exp(-x+a*Math.log(x)-gammln(a));}
+  var b=x+1-a,c0=1e300,d=1/b,h=d;
+  for(var i=1;i<500;i++){var an=-i*(i-a);b+=2;d=an*d+b;if(Math.abs(d)<1e-300)d=1e-300;
+    c0=b+an/c0;if(Math.abs(c0)<1e-300)c0=1e-300;d=1/d;var de=d*c0;h*=de;
+    if(Math.abs(de-1)<1e-12)break;}
+  return h*Math.exp(-x+a*Math.log(x)-gammln(a));}
+function pchi2(chi2,nu){return gammq(nu/2,chi2/2);}   /* p-valor (cola derecha) */
+
+/* ---- cuadrados minimos ---- */
+function ols(x,y){var n=x.length,mx=mean(x),my=mean(y),sxx=0,sxy=0,syy=0;
+  for(var i=0;i<n;i++){sxx+=(x[i]-mx)*(x[i]-mx);sxy+=(x[i]-mx)*(y[i]-my);syy+=(y[i]-my)*(y[i]-my);}
+  var b=sxy/sxx,a=my-b*mx,ss=0;
+  for(i=0;i<n;i++){var r=y[i]-(a+b*x[i]);ss+=r*r;}
+  var s2=ss/Math.max(1,n-2);
+  return{a:a,b:b,sa:Math.sqrt(s2*(1/n+mx*mx/sxx)),sb:Math.sqrt(s2/sxx),
+         r:sxy/Math.sqrt(sxx*syy),R2:1-ss/syy,sy:Math.sqrt(s2),ss:ss,n:n};}
+function wls(x,y,sy){var n=x.length,S=0,Sx=0,Sy=0,Sxx=0,Sxy=0;
+  for(var i=0;i<n;i++){var w=1/(sy[i]*sy[i]);S+=w;Sx+=w*x[i];Sy+=w*y[i];Sxx+=w*x[i]*x[i];Sxy+=w*x[i]*y[i];}
+  var D=S*Sxx-Sx*Sx,b=(S*Sxy-Sx*Sy)/D,a=(Sxx*Sy-Sx*Sxy)/D,chi2=0;
+  for(i=0;i<n;i++){var r=(y[i]-(a+b*x[i]))/sy[i];chi2+=r*r;}
+  var nu=n-2;
+  return{a:a,b:b,sa:Math.sqrt(Sxx/D),sb:Math.sqrt(S/D),chi2:chi2,nu:nu,
+         chi2r:chi2/nu,p:pchi2(chi2,nu)};}
+
+/* ============================== PLOT ============================== */
+function Plot(cv,opt){
+  opt=opt||{};
+  var p={cv:cv,ctx:cv.getContext('2d'),m:Object.assign({l:58,r:14,t:12,b:38},opt.m||{})};
+  p.resize=function(){var dpr=window.devicePixelRatio||1,w=cv.clientWidth,h=cv.clientHeight;
+    if(w<2||h<2)return;cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr);
+    p.ctx.setTransform(dpr,0,0,dpr,0,0);p.w=w;p.h=h;};
+  p.box=function(x0,x1,y0,y1){if(x1===x0){x1=x0+1;}if(y1===y0){y1=y0+1;}
+    p.x0=x0;p.x1=x1;p.y0=y0;p.y1=y1;return p;};
+  p.autoY=function(arr,pad){var lo=Infinity,hi=-Infinity;
+    for(var i=0;i<arr.length;i++){if(isFinite(arr[i])){lo=Math.min(lo,arr[i]);hi=Math.max(hi,arr[i]);}}
+    var d=(hi-lo)||Math.abs(hi)||1;pad=(pad===undefined)?0.08:pad;p.y0=lo-d*pad;p.y1=hi+d*pad;return p;};
+  p.X=function(x){return p.m.l+(x-p.x0)/(p.x1-p.x0)*(p.w-p.m.l-p.m.r);};
+  p.Y=function(y){return p.h-p.m.b-(y-p.y0)/(p.y1-p.y0)*(p.h-p.m.t-p.m.b);};
+  p.iX=function(px){return p.x0+(px-p.m.l)/(p.w-p.m.l-p.m.r)*(p.x1-p.x0);};
+  p.iY=function(py){return p.y0+(p.h-p.m.b-py)/(p.h-p.m.t-p.m.b)*(p.y1-p.y0);};
+  p.clear=function(){p.ctx.clearRect(0,0,p.w,p.h);
+    p.ctx.fillStyle='#fff';p.ctx.fillRect(0,0,p.w,p.h);return p;};
+  p.frame=function(xl,yl,o){o=o||{};var g=p.ctx,tx=ticks(p.x0,p.x1,o.nx||6),ty=ticks(p.y0,p.y1,o.ny||5);
+    g.save();g.lineWidth=1;g.font='12px system-ui,sans-serif';
+    if(o.grid!==false){g.strokeStyle='#eef2f5';g.beginPath();
+      tx.t.forEach(function(v){var X=Math.round(p.X(v))+.5;g.moveTo(X,p.m.t);g.lineTo(X,p.h-p.m.b);});
+      ty.t.forEach(function(v){var Y=Math.round(p.Y(v))+.5;g.moveTo(p.m.l,Y);g.lineTo(p.w-p.m.r,Y);});
+      g.stroke();}
+    g.strokeStyle=C.linea;g.strokeRect(p.m.l+.5,p.m.t+.5,p.w-p.m.l-p.m.r-1,p.h-p.m.t-p.m.b-1);
+    g.fillStyle=C.gris;g.textAlign='center';g.textBaseline='top';
+    tx.t.forEach(function(v){g.fillText(fmtTick(v,tx.step),p.X(v),p.h-p.m.b+6);});
+    g.textAlign='right';g.textBaseline='middle';
+    ty.t.forEach(function(v){g.fillText(fmtTick(v,ty.step),p.m.l-7,p.Y(v));});
+    g.fillStyle=C.tinta;g.font='13px system-ui,sans-serif';
+    if(xl){g.textAlign='center';g.textBaseline='bottom';g.fillText(xl,(p.m.l+p.w-p.m.r)/2,p.h-2);}
+    if(yl){g.save();g.translate(11,(p.m.t+p.h-p.m.b)/2);g.rotate(-Math.PI/2);
+      g.textAlign='center';g.textBaseline='top';g.fillText(yl,0,0);g.restore();}
+    g.restore();return p;};
+  p.clip=function(on){var g=p.ctx;if(on){g.save();g.beginPath();
+      g.rect(p.m.l,p.m.t,p.w-p.m.l-p.m.r,p.h-p.m.t-p.m.b);g.clip();}else{g.restore();}return p;};
+  p.line=function(xs,ys,o){o=o||{};var g=p.ctx;g.save();p.clip(true);
+    g.strokeStyle=o.c||C.azul;g.lineWidth=o.w||2;g.setLineDash(o.dash||[]);
+    g.beginPath();var st=false;
+    for(var i=0;i<xs.length;i++){if(!isFinite(ys[i])){st=false;continue;}
+      var X=p.X(xs[i]),Y=p.Y(ys[i]);if(!st){g.moveTo(X,Y);st=true;}else g.lineTo(X,Y);}
+    g.stroke();p.clip(false);g.restore();return p;};
+  p.pts=function(xs,ys,o){o=o||{};var g=p.ctx,r=o.r||3.5;g.save();p.clip(true);
+    g.fillStyle=o.c||C.rojo;g.strokeStyle=o.edge||'#fff';g.lineWidth=1;
+    for(var i=0;i<xs.length;i++){var X=p.X(xs[i]),Y=p.Y(ys[i]);
+      g.beginPath();g.arc(X,Y,r,0,6.2832);g.fill();if(o.edge!==false)g.stroke();}
+    p.clip(false);g.restore();return p;};
+  p.ebars=function(xs,ys,ey,ex,o){o=o||{};var g=p.ctx;g.save();p.clip(true);
+    g.strokeStyle=o.c||C.rojo;g.lineWidth=o.w||1.4;
+    for(var i=0;i<xs.length;i++){var X=p.X(xs[i]);
+      if(ey&&ey[i]>0){var Y1=p.Y(ys[i]-ey[i]),Y2=p.Y(ys[i]+ey[i]);
+        g.beginPath();g.moveTo(X,Y1);g.lineTo(X,Y2);g.moveTo(X-4,Y1);g.lineTo(X+4,Y1);
+        g.moveTo(X-4,Y2);g.lineTo(X+4,Y2);g.stroke();}
+      if(ex&&ex[i]>0){var Y=p.Y(ys[i]),X1=p.X(xs[i]-ex[i]),X2=p.X(xs[i]+ex[i]);
+        g.beginPath();g.moveTo(X1,Y);g.lineTo(X2,Y);g.moveTo(X1,Y-4);g.lineTo(X1,Y+4);
+        g.moveTo(X2,Y-4);g.lineTo(X2,Y+4);g.stroke();}}
+    p.clip(false);g.restore();return p;};
+  p.seg=function(x1,y1,x2,y2,o){o=o||{};var g=p.ctx;g.save();p.clip(true);
+    g.strokeStyle=o.c||C.gris;g.lineWidth=o.w||1.5;g.setLineDash(o.dash||[]);
+    g.beginPath();g.moveTo(p.X(x1),p.Y(y1));g.lineTo(p.X(x2),p.Y(y2));g.stroke();
+    p.clip(false);g.restore();return p;};
+  p.hline=function(y,o){return p.seg(p.x0,y,p.x1,y,o);};
+  p.vline=function(x,o){return p.seg(x,p.y0,x,p.y1,o);};
+  p.bars=function(h,o){o=o||{};var g=p.ctx,n=h.c.length,w=h.w;g.save();p.clip(true);
+    g.fillStyle=o.c||'rgba(27,73,101,.65)';g.strokeStyle=o.edge||'#fff';g.lineWidth=1;
+    for(var i=0;i<n;i++){if(h.c[i]<=0)continue;
+      var X1=p.X(h.lo+i*w),X2=p.X(h.lo+(i+1)*w),Y=p.Y(h.c[i]),Y0=p.Y(0);
+      g.fillRect(X1,Y,Math.max(1,X2-X1-1),Y0-Y);
+      if(X2-X1>3)g.strokeRect(X1,Y,Math.max(1,X2-X1-1),Y0-Y);}
+    p.clip(false);g.restore();return p;};
+  p.band=function(xs,lo,hi,o){o=o||{};var g=p.ctx;g.save();p.clip(true);
+    g.fillStyle=o.c||'rgba(27,73,101,.14)';g.beginPath();
+    g.moveTo(p.X(xs[0]),p.Y(lo[0]));
+    for(var i=1;i<xs.length;i++)g.lineTo(p.X(xs[i]),p.Y(lo[i]));
+    for(i=xs.length-1;i>=0;i--)g.lineTo(p.X(xs[i]),p.Y(hi[i]));
+    g.closePath();g.fill();p.clip(false);g.restore();return p;};
+  p.txt=function(x,y,s,o){o=o||{};var g=p.ctx;g.save();
+    g.fillStyle=o.c||C.tinta;g.font=o.font||'13px system-ui,sans-serif';
+    g.textAlign=o.align||'left';g.textBaseline=o.base||'bottom';
+    g.fillText(s,o.px?x:p.X(x),o.px?y:p.Y(y));g.restore();return p;};
+  p.resize();
+  return p;
+}
+/* re-dibujado en resize */
+var _redraws=[];
+function onResize(f){_redraws.push(f);}
+window.addEventListener('resize',function(){_redraws.forEach(function(f){f();});});
+
+/* control deslizante: devuelve valor y engancha el callback */
+function slider(id,cb){var s=$(id),v=$(id+'_v');
+  function upd(){if(v)v.textContent=s.dataset.fmt?
+      (+s.value).toFixed(+s.dataset.fmt):s.value;if(cb)cb();}
+  s.addEventListener('input',upd);upd();return s;}
+function val(id){return +$(id).value;}
+
+/* altura para iframes (WordPress) */
+function avisarAltura(){try{var h=document.documentElement.scrollHeight;
+  parent.postMessage({tipo:'altura-sim',alto:h,src:location.pathname},'*');}catch(e){}}
+window.addEventListener('load',function(){avisarAltura();setTimeout(avisarAltura,600);});
+window.addEventListener('resize',avisarAltura);
+
+
+var DT=[],DEN=null,RANGO=[0,1];
+function muestrear(){
+  var d=$('dist').value,N=val('N');DT=[];
+  for(var i=0;i<N;i++){
+    if(d==='g')DT.push(10+2*randn());
+    else if(d==='b')DT.push(Math.random()<0.5?7+1.1*randn():13+1.3*randn());
+    else if(d==='e')DT.push(-3*Math.log(Math.random()));
+    else if(d==='r')DT.push(0.15+Math.exp(-1.90+0.45*randn()));
+    else DT.push(4+8*Math.random());
+  }
+  if(d==='g')DEN=function(x){return gauss(x,10,2);};
+  else if(d==='b')DEN=function(x){return 0.5*gauss(x,7,1.1)+0.5*gauss(x,13,1.3);};
+  else if(d==='e')DEN=function(x){return x>0?Math.exp(-x/3)/3:0;};
+  else if(d==='r')DEN=function(x){var u=x-0.15;
+    return u>0?Math.exp(-Math.pow((Math.log(u)+1.90)/0.45,2)/2)/(u*0.45*Math.sqrt(2*Math.PI)):0;};
+  else DEN=function(x){return (x>=4&&x<=12)?1/8:0;};
+  var lo=Math.min.apply(null,DT),hi=Math.max.apply(null,DT),d0=(hi-lo)*0.06;
+  RANGO=[lo-d0,hi+d0];
+}
+function cuantil(a,q){var s=a.slice().sort(function(x,y){return x-y;});
+  var p=q*(s.length-1),i=Math.floor(p),f=p-i;
+  return i+1<s.length?s[i]*(1-f)+s[i+1]*f:s[i];}
+function reglas(){
+  var N=DT.length,s=sd(DT),iqr=cuantil(DT,0.75)-cuantil(DT,0.25),
+      R=RANGO[1]-RANGO[0];
+  var hSc=3.49*s*Math.pow(N,-1/3), hFD=2*iqr*Math.pow(N,-1/3),
+      kSt=Math.ceil(1+Math.log2(N));
+  return {N:N,s:s,iqr:iqr,R:R,
+          Sturges:kSt, Scott:Math.max(1,Math.round(R/hSc)),
+          FD:Math.max(1,Math.round(R/hFD)), hSc:hSc, hFD:hFD};
+}
+var pH=Plot($('cvH')),pC=Plot($('cvC')),pE=Plot($('cvE'));
+function dibH(){
+  var nb=val('nb'),sh=val('sh')/100,R=RANGO[1]-RANGO[0],w=R/nb;
+  var lo=RANGO[0]-sh*w, h=hist(DT,nb+1,lo,lo+(nb+1)*w);
+  /* a densidad */
+  var dens={c:h.c.map(function(c){return c/(DT.length*w);}),lo:h.lo,hi:h.hi,w:h.w};
+  pH.resize();pH.clear();
+  var mx=Math.max.apply(null,dens.c);
+  if(DEN&&$('chD').checked){
+    var Xd=linspace(RANGO[0],RANGO[1],250);
+    Xd.forEach(function(x){mx=Math.max(mx,DEN(x));});}
+  pH.box(lo,lo+(nb+1)*w,0,mx*1.15).frame('valor','densidad');
+  pH.bars(dens);
+  if(DEN&&$('chD').checked){
+    var X=linspace(pH.x0,pH.x1,300);
+    pH.line(X,X.map(DEN),{c:C.rojo,w:2.6});}
+  var mn=1e9,mxc=0;h.c.forEach(function(c){if(c>0)mn=Math.min(mn,c);mxc=Math.max(mxc,c);});
+  $('outH').innerHTML='Ancho del intervalo: <b>'+w.toFixed(3)+'</b> · cuentas por intervalo: '+
+    'entre '+(mn===1e9?0:mn)+' y '+mxc+' · fluctuación relativa del intervalo más poblado: <b>'+
+    (100/Math.sqrt(Math.max(1,mxc))).toFixed(0)+' %</b>, y del menos poblado: <b>'+
+    (100/Math.sqrt(Math.max(1,mn===1e9?1:mn))).toFixed(0)+' %</b>'+
+    (mxc<8?' → <span style="color:'+C.rojo+'">con tan pocas cuentas por intervalo, lo que ves '+
+     'es ruido, no forma</span>':'');
+}
+function dibC(){
+  var R=reglas(),act=val('nb');
+  $('tabR').innerHTML='<tr><th>Regla</th><th>Criterio</th><th>Intervalos aquí</th></tr>'+
+    '<tr><td>Sturges</td><td>k = 1 + log₂N</td><td>'+R.Sturges+'</td></tr>'+
+    '<tr><td>Scott</td><td>h = 3.49·s·N<sup>−1/3</sup></td><td>'+R.Scott+'</td></tr>'+
+    '<tr><td>Freedman–Diaconis</td><td>h = 2·IQR·N<sup>−1/3</sup></td><td>'+R.FD+'</td></tr>'+
+    '<tr><td><b>el que elegiste</b></td><td>—</td><td><b>'+act+'</b></td></tr>';
+  /* barrido: error cuadratico medio integrado contra la densidad verdadera */
+  var ks=[],er=[];
+  for(var k=3;k<=80;k++){
+    var w=(RANGO[1]-RANGO[0])/k,h=hist(DT,k,RANGO[0],RANGO[1]),s=0;
+    for(var i=0;i<k;i++){
+      var xc=RANGO[0]+(i+0.5)*w,de=h.c[i]/(DT.length*w),dv=DEN?DEN(xc):0;
+      s+=(de-dv)*(de-dv)*w;}
+    ks.push(k);er.push(s);}
+  pC.resize();pC.clear();
+  pC.box(3,80,0,Math.max.apply(null,er)*1.1).frame('cantidad de intervalos','error contra la densidad real');
+  pC.line(ks,er,{c:C.azul,w:2.2});
+  var im=0;for(i=1;i<er.length;i++)if(er[i]<er[im])im=i;
+  pC.vline(ks[im],{c:C.verde,w:1.6,dash:[4,4]});
+  pC.txt(ks[im],Math.max.apply(null,er)*1.03,' mejor: '+ks[im],{c:C.verde});
+  [['Sturges',R.Sturges,C.ocre],['Scott',R.Scott,C.rojo],['FD',R.FD,C.violeta],
+   ['tuyo',act,C.tinta]].forEach(function(o,j){
+    if(o[1]>=3&&o[1]<=80){pC.vline(o[1],{c:o[2],w:1.4,dash:[3,3]});
+      pC.txt(o[1],Math.max.apply(null,er)*(0.92-0.09*j),' '+o[0],{c:o[2]});}});
+  $('outC').innerHTML='Este panel usa una ventaja que en el laboratorio no vas a tener: '+
+    '<b>conocemos la densidad verdadera</b>, así que podemos medir cuánto se equivoca cada '+
+    'elección. En datos reales no hay curva contra la cual comparar, y por eso las reglas '+
+    'automáticas son un punto de partida, no una respuesta.';
+}
+function dibE(){
+  var s=DT.slice().sort(function(a,b){return a-b;}),n=s.length,X=[],Y=[];
+  for(var i=0;i<n;i++){X.push(s[i],s[i]);Y.push(i/n,(i+1)/n);}
+  pE.resize();pE.clear();
+  pE.box(RANGO[0],RANGO[1],-0.12,1.05).frame('valor','F(x) acumulada');
+  pE.line(X,Y,{c:C.azul,w:2});
+  if(DEN){ /* acumulada teorica por integracion numerica */
+    var G=linspace(RANGO[0],RANGO[1],400),ac=[],su=0,h=(RANGO[1]-RANGO[0])/399;
+    for(i=0;i<G.length;i++){su+=DEN(G[i])*h;ac.push(su);}
+    var tot=ac[ac.length-1];
+    pE.line(G,ac.map(function(v){return v/Math.max(tot,1e-9);}),{c:C.rojo,w:2,dash:[6,4]});}
+  /* strip plot abajo */
+  for(i=0;i<n;i++)pE.pts([s[i]],[-0.06+0.02*(Math.random()-0.5)],
+    {c:'rgba(27,73,101,.35)',r:2,edge:false});
+  var d=0;for(i=0;i<n;i++){var F=(i+1)/n;}
+  $('outE').innerHTML='La acumulada empírica (azul) contra la teórica (rojo punteado). No hay '+
+    'ningún parámetro elegido por vos: la figura es una función determinista de los datos. '+
+    'Abajo, los datos crudos uno por uno — con N = '+n+' todavía se pueden mostrar todos, '+
+    'que es siempre la opción más honesta cuando entran.';
+}
+function todo(){muestrear();dibH();dibC();dibE();}
+['N'].forEach(function(id){slider(id,todo);});
+['nb','sh'].forEach(function(id){slider(id,dibH);});
+$('dist').onchange=todo;$('bn').onclick=todo;$('chD').onchange=dibH;
+onResize(function(){dibH();dibC();dibE();});
+todo();
+
+</script>
+</body>
+</html>

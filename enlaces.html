@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Enlaces recomendados · Labo 1 (Cátedra Acha)</title>
+<style>
+:root{
+  --tinta:#16222c; --gris:#5b6b76; --linea:#d7dee3; --fondo:#ffffff; --panel:#f5f8fa;
+  --azul:#1b4965; --rojo:#c1444f; --verde:#1f8a70; --ocre:#c98a1e; --violeta:#6a4c93;
+  --radio:10px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fondo);color:var(--tinta);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  font-size:16px;line-height:1.55}
+.wrap{max-width:920px;margin:0 auto;padding:18px 16px 48px}
+header.top{border-bottom:3px solid var(--azul);padding-bottom:10px;margin-bottom:18px}
+.tag{display:inline-block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;
+  color:#fff;background:var(--azul);padding:3px 9px;border-radius:999px}
+h1{font-size:1.5rem;margin:.5rem 0 .2rem;line-height:1.25}
+h2{font-size:1.12rem;margin:1.9rem 0 .5rem;color:var(--azul);
+   border-left:4px solid var(--azul);padding-left:9px}
+h3{font-size:1rem;margin:1.2rem 0 .3rem;color:var(--gris)}
+p.sub{color:var(--gris);margin:.2rem 0 0}
+.card{background:var(--panel);border:1px solid var(--linea);border-radius:var(--radio);
+  padding:14px;margin:14px 0}
+.card.blanco{background:#fff}
+.ctrl{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px 18px;margin:6px 0 2px}
+.ctrl label{display:block;font-size:13px;color:var(--gris);margin-bottom:2px}
+.ctrl .val{float:right;font-variant-numeric:tabular-nums;color:var(--tinta);font-weight:600}
+input[type=range]{width:100%;accent-color:var(--azul);margin:0}
+select,input[type=number]{width:100%;padding:5px 7px;border:1px solid var(--linea);
+  border-radius:6px;background:#fff;color:var(--tinta);font-size:14px}
+.btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+button{font:inherit;font-size:14px;padding:7px 14px;border-radius:8px;border:1px solid var(--azul);
+  background:var(--azul);color:#fff;cursor:pointer}
+button.sec{background:#fff;color:var(--azul)}
+button:active{transform:translateY(1px)}
+button[disabled]{opacity:.45;cursor:default}
+label.chk{font-size:14px;color:var(--tinta);display:inline-flex;align-items:center;gap:6px;
+  margin-right:14px;cursor:pointer}
+canvas{display:block;width:100%;background:#fff;border:1px solid var(--linea);
+  border-radius:8px;touch-action:none}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:640px){.grid2{grid-template-columns:1fr}}
+.out{font-variant-numeric:tabular-nums;font-size:14px}
+.out b{font-weight:600}
+table{border-collapse:collapse;width:100%;font-size:14px;margin-top:8px}
+th,td{border-bottom:1px solid var(--linea);padding:5px 7px;text-align:right}
+th:first-child,td:first-child{text-align:left}
+th{color:var(--gris);font-weight:600;font-size:12.5px;text-transform:uppercase;letter-spacing:.03em}
+.depto{font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--gris);
+  font-weight:700;margin:0 0 8px}
+details.resp{border:1px solid var(--linea);border-radius:8px;background:#fff;margin:8px 0;padding:0}
+details.resp>summary{cursor:pointer;padding:8px 12px;font-size:14px;font-weight:600;color:var(--azul);
+  list-style:none;display:flex;align-items:center;gap:8px}
+details.resp>summary::-webkit-details-marker{display:none}
+details.resp>summary::before{content:"\25B8";font-size:12px;color:var(--gris);transition:transform .15s}
+details.resp[open]>summary::before{transform:rotate(90deg)}
+details.resp>div{padding:2px 14px 12px;font-size:14.5px}
+details.resp.corta>summary{color:var(--verde)}
+details.resp.corta{border-left:4px solid var(--verde)}
+details.resp.larga{border-left:4px solid var(--azul)}
+.preg{margin:22px 0 6px;font-size:15.5px}
+.preg b{color:var(--azul)}
+.volver{font-size:14px}
+.nota{border-left:4px solid var(--ocre);background:#fdf8ec;padding:10px 12px;border-radius:0 8px 8px 0;
+  margin:14px 0;font-size:14.5px}
+.clave{border-left:4px solid var(--verde);background:#eef8f5;padding:10px 12px;border-radius:0 8px 8px 0;
+  margin:14px 0;font-size:14.5px}
+.aviso{border-left:4px solid var(--rojo);background:#fbeff0;padding:10px 12px;border-radius:0 8px 8px 0;
+  margin:14px 0;font-size:14.5px}
+.consigna{background:#fff;border:1px dashed var(--azul);border-radius:8px;padding:10px 12px;margin:14px 0;font-size:14.5px}
+.consigna b{color:var(--azul)}
+code{background:#eef2f5;padding:1px 5px;border-radius:4px;font-size:.9em}
+footer{margin-top:34px;padding-top:12px;border-top:1px solid var(--linea);
+  color:var(--gris);font-size:13px}
+a{color:var(--azul)}
+.legend{font-size:13px;color:var(--gris);margin-top:6px}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:2px;margin-right:4px;vertical-align:-1px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top">
+  <p class="depto">Laboratorio 1 · Cátedra Acha · Departamento de Física, FCEyN, UBA</p>
+  <span class="tag">Laboratorio 1 · Cátedra Acha</span>
+  <h1>Enlaces recomendados</h1>
+  <p class="sub">Sitios que vale la pena tener a mano durante la cursada.</p>
+</header>
+
+<p>Una selección corta y con criterio, no una lista de todo lo que existe. Cada enlace está acá
+porque sirve para algo concreto del curso, y abajo de cada uno dice para qué. Todos son gratuitos
+y ninguno requiere registrarse.</p>
+
+<div class="consigna">
+<b>Cómo usarlos.</b> No hace falta recorrerlos todos. Lo que sí conviene: cuando en el curso
+aparezca un concepto que no te termine de cerrar, buscá acá si hay algo que lo muestre de otra
+manera. Ver lo mismo explicado por dos personas distintas es una de las formas más eficientes de
+estudiar que existen.
+</div>
+<h2>Estadística y ajustes, para tocar con las manos</h2>
+<p style="color:var(--gris);font-size:14.5px;margin-top:-2px">Lo más directamente aplicable a lo que hacemos en el curso.</p>
+<div class="card blanco" style="margin:9px 0"><h3 style="margin:0 0 .25rem;font-size:1.04rem"><a href="https://seeing-theory.brown.edu/" target="_blank" rel="noopener">Seeing Theory</a></h3><p style="margin:0;font-size:14.5px;color:var(--gris)">Seis capítulos de probabilidad y estadística, cada uno con tres visualizaciones interactivas: probabilidad básica, distribuciones, inferencia frecuentista y bayesiana, regresión. Hecho en la Universidad de Brown, con el código abierto. <b>Empezá por el capítulo de distribuciones y por el del teorema central del límite</b>: es lo mismo que ves en nuestras simulaciones 03 y 04, contado de otra manera.</p><p style="margin:.35rem 0 0;font-size:12.5px;color:var(--linea)"><span style="color:#9aa8b1">https://seeing-theory.brown.edu/</span></p></div>
+<div class="card blanco" style="margin:9px 0"><h3 style="margin:0 0 .25rem;font-size:1.04rem"><a href="http://guessthecorrelation.com/" target="_blank" rel="noopener">Guess the Correlation</a></h3><p style="margin:0;font-size:14.5px;color:var(--gris)">Un juego: te muestran una nube de puntos y tenés que adivinar r. Suena tonto y es la mejor cura conocida contra la fe en el coeficiente de correlación. Después de veinte rondas vas a entender por qué en el curso insistimos en que <b>r no mide bondad de ajuste</b>. Aviso: sólo genera correlaciones positivas.</p><p style="margin:.35rem 0 0;font-size:12.5px;color:var(--linea)"><span style="color:#9aa8b1">http://guessthecorrelation.com/</span></p></div>
+<div class="card blanco" style="margin:9px 0"><h3 style="margin:0 0 .25rem;font-size:1.04rem"><a href="https://setosa.io/ev/ordinary-least-squares-regression/" target="_blank" rel="noopener">Ordinary Least Squares Regression: Explained Visually</a></h3><p style="margin:0;font-size:14.5px;color:var(--gris)">Cuadrados mínimos con los puntos arrastrables y los cuadrados dibujados. Muy parecido a nuestra simulación 08, y vale la pena ver las dos: los mismos conceptos explicados por gente distinta terminan de acomodarse.</p><p style="margin:.35rem 0 0;font-size:12.5px;color:var(--linea)"><span style="color:#9aa8b1">https://setosa.io/ev/ordinary-least-squares-regression/</span></p></div>
+<div class="card blanco" style="margin:9px 0"><h3 style="margin:0 0 .25rem;font-size:1.04rem"><a href="https://www.research.autodesk.com/publications/same-stats-different-graphs/" target="_blank" rel="noopener">El Datasaurus Dozen</a></h3><p style="margin:0;font-size:14.5px;color:var(--gris)">Trece conjuntos de datos que comparten media, desviación estándar y coeficiente de correlación hasta el segundo decimal, y que van desde un dinosaurio hasta una estrella. Es el cuarteto de Anscombe llevado al extremo, con una animación que hace de la lección algo difícil de olvidar: <b>nunca confíes sólo en los estadísticos de resumen, graficá</b>.</p><p style="margin:.35rem 0 0;font-size:12.5px;color:var(--linea)"><span style="color:#9aa8b1">https://www.research.autodesk.com/publications/same-stats-different-graphs/</span></p></div>
+<h2>Simuladores de física</h2>
+<p style="color:var(--gris);font-size:14.5px;margin-top:-2px">Para explorar el fenómeno antes de tenerlo enfrente en la mesada.</p>
+<div class="card blanco" style="margin:9px 0"><h3 style="margin:0 0 .25rem;font-size:1.04rem"><a href="https://phet.colorado.edu/es/simulations/filter?subjects=physics" target="_blank" rel="noopener">PhET (Universidad de Colorado)</a></h3><p style="margin:0;font-size:14.5px;color:var(--gris)">El repositorio más grande de simulaciones de física, en castellano y en HTML5 (corre en el celular). Para nuestro curso: <i>Laboratorio de péndulo</i>, <i>Ley de Hooke</i>, <i>Laboratorio de colisiones</i> y <i>Movimiento de proyectiles</i>. Son excelentes para entender el fenómeno; no están pensadas para incertezas, que es lo que agregan las nuestras.</p><p style="margin:.35rem 0 0;font-size:12.5px;color:var(--linea)"><span style="color:#9aa8b1">https://phet.colorado.edu/es/simulations/filter?subjects=physics</span></p></div>
+<div class="card blanco" style="margin:9px 0"><h3 style="margin:0 0 .25rem;font-size:1.04rem"><a href="https://phet.colorado.edu/es/simulation/pendulum-lab" target="_blank" rel="noopener">Laboratorio de péndulo (PhET)</a></h3><p style="margin:0;font-size:14.5px;color:var(--gris)">El enlace directo al que más nos sirve. Tiene cronómetro y regla incorporados, así que podés practicar el procedimiento completo de medición antes de la clase.</p><p style="margin:.35rem 0 0;font-size:12.5px;color:var(--linea)"><span style="color:#9aa8b1">https://phet.colorado.edu/es/simulation/pendulum-lab</span></p></div>
+<h2>Metrología: de dónde salen los números de tabla</h2>
+<p style="color:var(--gris);font-size:14.5px;margin-top:-2px">Esto casi nunca se lo dan a los estudiantes de grado, y es una lástima: los valores de referencia contra los que comparás tus resultados son mediciones hechas por alguien, con su incerteza y su fecha.</p>
+<div class="card blanco" style="margin:9px 0"><h3 style="margin:0 0 .25rem;font-size:1.04rem"><a href="https://www.ign.gob.ar/NuestrasActividades/Geodesia/Gravimetria/RAGA" target="_blank" rel="noopener">Red Argentina de Gravedad Absoluta — IGN</a></h3><p style="margin:0;font-size:14.5px;color:var(--gris)">El Instituto Geográfico Nacional publica los valores medidos de <b>g</b> en 36 estaciones del país, con desvíos del orden de 0.02 mGal = 2×10⁻⁷ m/s², y la planilla es descargable. Cuando en el práctico del péndulo comparás tu resultado con 9.797 m/s², estás comparando contra esto.</p><p style="margin:.35rem 0 0;font-size:12.5px;color:var(--linea)"><span style="color:#9aa8b1">https://www.ign.gob.ar/NuestrasActividades/Geodesia/Gravimetria/RAGA</span></p></div>
+<div class="card blanco" style="margin:9px 0"><h3 style="margin:0 0 .25rem;font-size:1.04rem"><a href="https://www.ign.gob.ar/NuestrasActividades/Geodesia/Gravimetria/Introduccion" target="_blank" rel="noopener">Un siglo de gravimetría en la Argentina — IGN</a></h3><p style="margin:0;font-size:14.5px;color:var(--gris)">La historia desde 1906, cuando se vinculó Buenos Aires con Potsdam usando un aparato cuadripendular. En los años 50, Baglietto midió sobre la Estación Fundamental Buenos Aires A y obtuvo 979692,0 mGal — es decir <b>9,79692 m/s²</b>. Un péndulo, bien hecho, midiendo g con seis cifras: exactamente lo que ustedes van a intentar con dos.</p><p style="margin:.35rem 0 0;font-size:12.5px;color:var(--linea)"><span style="color:#9aa8b1">https://www.ign.gob.ar/NuestrasActividades/Geodesia/Gravimetria/Introduccion</span></p></div>
+<div class="card blanco" style="margin:9px 0"><h3 style="margin:0 0 .25rem;font-size:1.04rem"><a href="https://physics.nist.gov/cuu/Constants/" target="_blank" rel="noopener">Constantes físicas fundamentales — NIST</a></h3><p style="margin:0;font-size:14.5px;color:var(--gris)">Los valores CODATA, cada uno con su incerteza y su correlación con los demás. Fijate cuáles tienen incerteza <b>cero</b> por definición desde la redefinición del SI de 2019, y por qué.</p><p style="margin:.35rem 0 0;font-size:12.5px;color:var(--linea)"><span style="color:#9aa8b1">https://physics.nist.gov/cuu/Constants/</span></p></div>
+<div class="card blanco" style="margin:9px 0"><h3 style="margin:0 0 .25rem;font-size:1.04rem"><a href="https://www.bipm.org/en/publications/si-brochure" target="_blank" rel="noopener">El Sistema Internacional de Unidades — BIPM</a></h3><p style="margin:0;font-size:14.5px;color:var(--gris)">El folleto oficial. Desde 2019 todas las unidades se definen fijando constantes de la naturaleza: el kilogramo ya no es un cilindro guardado en París sino una consecuencia de fijar la constante de Planck.</p><p style="margin:.35rem 0 0;font-size:12.5px;color:var(--linea)"><span style="color:#9aa8b1">https://www.bipm.org/en/publications/si-brochure</span></p></div>
+<div class="card blanco" style="margin:9px 0"><h3 style="margin:0 0 .25rem;font-size:1.04rem"><a href="https://www.inti.gob.ar/" target="_blank" rel="noopener">INTI — metrología en la Argentina</a></h3><p style="margin:0;font-size:14.5px;color:var(--gris)">El instituto que mantiene los patrones nacionales y da trazabilidad a las calibraciones. Cuando un instrumento dice «calibrado», la cadena termina acá.</p><p style="margin:.35rem 0 0;font-size:12.5px;color:var(--linea)"><span style="color:#9aa8b1">https://www.inti.gob.ar/</span></p></div>
+<h2>Astronomía y naturaleza</h2>
+<p style="color:var(--gris);font-size:14.5px;margin-top:-2px">Física de la buena, con escalas que no entran en el laboratorio.</p>
+<div class="card blanco" style="margin:9px 0"><h3 style="margin:0 0 .25rem;font-size:1.04rem"><a href="https://apod.nasa.gov/apod/astropix.html" target="_blank" rel="noopener">Astronomy Picture of the Day (NASA)</a></h3><p style="margin:0;font-size:14.5px;color:var(--gris)">Una imagen por día desde 1995, cada una con una explicación escrita por astrónomos. El archivo completo es navegable. Es probablemente el sitio de divulgación científica más sostenido que existe.</p><p style="margin:.35rem 0 0;font-size:12.5px;color:var(--linea)"><span style="color:#9aa8b1">https://apod.nasa.gov/apod/astropix.html</span></p></div>
+<div class="card blanco" style="margin:9px 0"><h3 style="margin:0 0 .25rem;font-size:1.04rem"><a href="https://eyes.nasa.gov/" target="_blank" rel="noopener">Eyes on the Solar System (NASA)</a></h3><p style="margin:0;font-size:14.5px;color:var(--gris)">Navegación tridimensional del sistema solar con efemérides reales: podés adelantar el tiempo y ver dónde están los planetas y las sondas ahora. Para ver de dónde sale que T² ∝ a³, mover los planetas y mirar los períodos es más convincente que la fórmula.</p><p style="margin:.35rem 0 0;font-size:12.5px;color:var(--linea)"><span style="color:#9aa8b1">https://eyes.nasa.gov/</span></p></div>
+<div class="card blanco" style="margin:9px 0"><h3 style="margin:0 0 .25rem;font-size:1.04rem"><a href="https://stellarium-web.org/" target="_blank" rel="noopener">Stellarium Web</a></h3><p style="margin:0;font-size:14.5px;color:var(--gris)">Planetario en el navegador: el cielo desde tu posición y en la fecha que elijas. Sirve para algo muy concreto: identificar qué estás viendo antes de intentar medirlo.</p><p style="margin:.35rem 0 0;font-size:12.5px;color:var(--linea)"><span style="color:#9aa8b1">https://stellarium-web.org/</span></p></div>
+<div class="card blanco" style="margin:9px 0"><h3 style="margin:0 0 .25rem;font-size:1.04rem"><a href="https://www.timeanddate.com/" target="_blank" rel="noopener">timeanddate.com</a></h3><p style="margin:0;font-size:14.5px;color:var(--gris)">Salidas y puestas del Sol, duración del día, eclipses, fases lunares, para cualquier lugar y fecha. Con los datos de dos ciudades a distinta latitud se puede rehacer el experimento de Eratóstenes, y con la variación anual de la salida del Sol aparece el analema y la ecuación del tiempo.</p><p style="margin:.35rem 0 0;font-size:12.5px;color:var(--linea)"><span style="color:#9aa8b1">https://www.timeanddate.com/</span></p></div>
+<div class="card blanco" style="margin:9px 0"><h3 style="margin:0 0 .25rem;font-size:1.04rem"><a href="https://www.zooniverse.org/" target="_blank" rel="noopener">Zooniverse</a></h3><p style="margin:0;font-size:14.5px;color:var(--gris)">Ciencia ciudadana en serio: clasificar galaxias, buscar tránsitos planetarios, transcribir registros meteorológicos históricos. Los datos que procesás terminan en publicaciones reales.</p><p style="margin:.35rem 0 0;font-size:12.5px;color:var(--linea)"><span style="color:#9aa8b1">https://www.zooniverse.org/</span></p></div>
+<h2>Datos y visualización</h2>
+<p style="color:var(--gris);font-size:14.5px;margin-top:-2px">Para pensar qué hace que una figura sea honesta.</p>
+<div class="card blanco" style="margin:9px 0"><h3 style="margin:0 0 .25rem;font-size:1.04rem"><a href="https://ourworldindata.org/" target="_blank" rel="noopener">Our World in Data</a></h3><p style="margin:0;font-size:14.5px;color:var(--gris)">Gráficos hechos con criterio sobre datos públicos, con las fuentes siempre a la vista. Vale la pena mirarlo con ojo crítico de laboratorio: ¿dónde están las incertezas? ¿qué esconde una escala logarítmica? ¿por qué eligieron ese rango de años?</p><p style="margin:.35rem 0 0;font-size:12.5px;color:var(--linea)"><span style="color:#9aa8b1">https://ourworldindata.org/</span></p></div>
+<div class="card blanco" style="margin:9px 0"><h3 style="margin:0 0 .25rem;font-size:1.04rem"><a href="https://gml.noaa.gov/ccgg/trends/" target="_blank" rel="noopener">Serie de CO₂ de Mauna Loa — NOAA</a></h3><p style="margin:0;font-size:14.5px;color:var(--gris)">Una serie temporal de sesenta años, descargable, con tendencia y estacionalidad superpuestas. Es un ejercicio de ajuste excelente y no trivial: probá separar las dos componentes con lo que aprendas en el curso.</p><p style="margin:.35rem 0 0;font-size:12.5px;color:var(--linea)"><span style="color:#9aa8b1">https://gml.noaa.gov/ccgg/trends/</span></p></div>
+
+<div class="nota">
+Si algún enlace está roto, o si encontrás una página que debería estar en esta lista, avisá. Se
+actualiza.
+</div>
+<p class="volver" style="margin-top:22px">↩ <a href="index.html">Volver al índice de
+simulaciones</a></p>
+
+<footer>
+  <b>Laboratorio 1 — Cátedra Acha</b> · Departamento de Física, FCEyN-UBA ·
+  Simulación interactiva de uso libre para el curso. Todo corre en tu navegador: no se envía ningún dato.
+</footer>
+</div>
+<script>
+/* ============ kit minimo de graficos + estadistica (Labo 1, Catedra Acha) ============ */
+var C={azul:'#1b4965',rojo:'#c1444f',verde:'#1f8a70',ocre:'#c98a1e',violeta:'#6a4c93',
+       gris:'#5b6b76',linea:'#d7dee3',tinta:'#16222c'};
+
+function $(id){return document.getElementById(id);}
+function el(t,a){var e=document.createElement(t);for(var k in (a||{}))e[k]=a[k];return e;}
+
+/* ---- numeros ---- */
+function nice(x,round){var e=Math.floor(Math.log10(x)),f=x/Math.pow(10,e),nf;
+  if(round){nf=f<1.5?1:(f<3?2:(f<7?5:10));}else{nf=f<=1?1:(f<=2?2:(f<=5?5:10));}
+  return nf*Math.pow(10,e);}
+function ticks(a,b,n){if(!(b>a))return{t:[a],step:1};
+  var step=nice((b-a)/Math.max(1,n-1),true),s=Math.ceil(a/step-1e-9)*step,t=[];
+  for(var v=s;v<=b+step*1e-6;v+=step)t.push(Math.abs(v)<step*1e-9?0:v);
+  return{t:t,step:step};}
+function fmtTick(v,step){var a=Math.abs(v);
+  if(a!==0&&(a>=1e5||a<1e-4))return v.toExponential(1);
+  var d=Math.max(0,-Math.floor(Math.log10(step)+1e-9));return v.toFixed(Math.min(d,6));}
+function fmt(x,n){if(!isFinite(x))return '—';return x.toFixed(n===undefined?2:n);}
+/* redondeo de catedra: incerteza a 1 cifra significativa, valor al mismo orden */
+function reportar(x,dx,u){
+  if(!(dx>0)||!isFinite(dx))return fmt(x,3)+(u?' '+u:'');
+  var e=Math.floor(Math.log10(dx)),p=Math.pow(10,e),d=Math.round(dx/p);
+  if(d>=10){d=1;e+=1;p=Math.pow(10,e);}
+  var dxr=d*p, xr=Math.round(x/p)*p, dec=Math.max(0,-e);
+  return xr.toFixed(dec)+' ± '+dxr.toFixed(dec)+(u?' '+u:'');
+}
+function pot10(x,dec){ // notacion x·10^n para textos
+  if(x===0)return '0';var e=Math.floor(Math.log10(Math.abs(x)));
+  return (x/Math.pow(10,e)).toFixed(dec===undefined?2:dec)+'·10<sup>'+e+'</sup>';}
+
+/* ---- azar y estadistica ---- */
+var _z2=null;
+function randn(){if(_z2!==null){var z=_z2;_z2=null;return z;}
+  var u=0,v=0;while(u===0)u=Math.random();while(v===0)v=Math.random();
+  var r=Math.sqrt(-2*Math.log(u));_z2=r*Math.sin(2*Math.PI*v);return r*Math.cos(2*Math.PI*v);}
+function mean(a){var s=0;for(var i=0;i<a.length;i++)s+=a[i];return s/a.length;}
+function sd(a,ddof){ddof=(ddof===undefined)?1:ddof;if(a.length<=ddof)return NaN;
+  var m=mean(a),s=0;for(var i=0;i<a.length;i++)s+=(a[i]-m)*(a[i]-m);return Math.sqrt(s/(a.length-ddof));}
+function linspace(a,b,n){var v=[];for(var i=0;i<n;i++)v.push(a+(b-a)*i/(n-1));return v;}
+function hist(d,nb,lo,hi){var c=new Array(nb).fill(0),w=(hi-lo)/nb;
+  for(var i=0;i<d.length;i++){var k=Math.floor((d[i]-lo)/w);if(k>=0&&k<nb)c[k]++;}
+  return{c:c,lo:lo,hi:hi,w:w};}
+function erf(x){var s=x<0?-1:1;x=Math.abs(x);
+  var a1=0.254829592,a2=-0.284496736,a3=1.421413741,a4=-1.453152027,a5=1.061405429,p=0.3275911;
+  var t=1/(1+p*x),y=1-(((((a5*t+a4)*t)+a3)*t+a2)*t+a1)*t*Math.exp(-x*x);return s*y;}
+function Phi(z){return 0.5*(1+erf(z/Math.SQRT2));}
+function gauss(x,mu,s){return Math.exp(-0.5*Math.pow((x-mu)/s,2))/(s*Math.sqrt(2*Math.PI));}
+/* Q(a,x)=gamma incompleta superior regularizada (Numerical Recipes) */
+function gammln(x){var c=[76.18009172947146,-86.50532032941677,24.01409824083091,
+  -1.231739572450155,0.1208650973866179e-2,-0.5395239384953e-5],y=x,t=x+5.5,s=1.000000000190015;
+  t-=(x+0.5)*Math.log(t);for(var j=0;j<6;j++)s+=c[j]/++y;return -t+Math.log(2.5066282746310005*s/x);}
+function gammq(a,x){if(x<0||a<=0)return NaN;
+  if(x<a+1){var ap=a,sum=1/a,del=sum;
+    for(var n=1;n<500;n++){ap++;del*=x/ap;sum+=del;if(Math.abs(del)<Math.abs(sum)*1e-12)break;}
+    return 1-sum*Math.exp(-x+a*Math.log(x)-gammln(a));}
+  var b=x+1-a,c0=1e300,d=1/b,h=d;
+  for(var i=1;i<500;i++){var an=-i*(i-a);b+=2;d=an*d+b;if(Math.abs(d)<1e-300)d=1e-300;
+    c0=b+an/c0;if(Math.abs(c0)<1e-300)c0=1e-300;d=1/d;var de=d*c0;h*=de;
+    if(Math.abs(de-1)<1e-12)break;}
+  return h*Math.exp(-x+a*Math.log(x)-gammln(a));}
+function pchi2(chi2,nu){return gammq(nu/2,chi2/2);}   /* p-valor (cola derecha) */
+
+/* ---- cuadrados minimos ---- */
+function ols(x,y){var n=x.length,mx=mean(x),my=mean(y),sxx=0,sxy=0,syy=0;
+  for(var i=0;i<n;i++){sxx+=(x[i]-mx)*(x[i]-mx);sxy+=(x[i]-mx)*(y[i]-my);syy+=(y[i]-my)*(y[i]-my);}
+  var b=sxy/sxx,a=my-b*mx,ss=0;
+  for(i=0;i<n;i++){var r=y[i]-(a+b*x[i]);ss+=r*r;}
+  var s2=ss/Math.max(1,n-2);
+  return{a:a,b:b,sa:Math.sqrt(s2*(1/n+mx*mx/sxx)),sb:Math.sqrt(s2/sxx),
+         r:sxy/Math.sqrt(sxx*syy),R2:1-ss/syy,sy:Math.sqrt(s2),ss:ss,n:n};}
+function wls(x,y,sy){var n=x.length,S=0,Sx=0,Sy=0,Sxx=0,Sxy=0;
+  for(var i=0;i<n;i++){var w=1/(sy[i]*sy[i]);S+=w;Sx+=w*x[i];Sy+=w*y[i];Sxx+=w*x[i]*x[i];Sxy+=w*x[i]*y[i];}
+  var D=S*Sxx-Sx*Sx,b=(S*Sxy-Sx*Sy)/D,a=(Sxx*Sy-Sx*Sxy)/D,chi2=0;
+  for(i=0;i<n;i++){var r=(y[i]-(a+b*x[i]))/sy[i];chi2+=r*r;}
+  var nu=n-2;
+  return{a:a,b:b,sa:Math.sqrt(Sxx/D),sb:Math.sqrt(S/D),chi2:chi2,nu:nu,
+         chi2r:chi2/nu,p:pchi2(chi2,nu)};}
+
+/* ============================== PLOT ============================== */
+function Plot(cv,opt){
+  opt=opt||{};
+  var p={cv:cv,ctx:cv.getContext('2d'),m:Object.assign({l:58,r:14,t:12,b:38},opt.m||{})};
+  p.resize=function(){var dpr=window.devicePixelRatio||1,w=cv.clientWidth,h=cv.clientHeight;
+    if(w<2||h<2)return;cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr);
+    p.ctx.setTransform(dpr,0,0,dpr,0,0);p.w=w;p.h=h;};
+  p.box=function(x0,x1,y0,y1){if(x1===x0){x1=x0+1;}if(y1===y0){y1=y0+1;}
+    p.x0=x0;p.x1=x1;p.y0=y0;p.y1=y1;return p;};
+  p.autoY=function(arr,pad){var lo=Infinity,hi=-Infinity;
+    for(var i=0;i<arr.length;i++){if(isFinite(arr[i])){lo=Math.min(lo,arr[i]);hi=Math.max(hi,arr[i]);}}
+    var d=(hi-lo)||Math.abs(hi)||1;pad=(pad===undefined)?0.08:pad;p.y0=lo-d*pad;p.y1=hi+d*pad;return p;};
+  p.X=function(x){return p.m.l+(x-p.x0)/(p.x1-p.x0)*(p.w-p.m.l-p.m.r);};
+  p.Y=function(y){return p.h-p.m.b-(y-p.y0)/(p.y1-p.y0)*(p.h-p.m.t-p.m.b);};
+  p.iX=function(px){return p.x0+(px-p.m.l)/(p.w-p.m.l-p.m.r)*(p.x1-p.x0);};
+  p.iY=function(py){return p.y0+(p.h-p.m.b-py)/(p.h-p.m.t-p.m.b)*(p.y1-p.y0);};
+  p.clear=function(){p.ctx.clearRect(0,0,p.w,p.h);
+    p.ctx.fillStyle='#fff';p.ctx.fillRect(0,0,p.w,p.h);return p;};
+  p.frame=function(xl,yl,o){o=o||{};var g=p.ctx,tx=ticks(p.x0,p.x1,o.nx||6),ty=ticks(p.y0,p.y1,o.ny||5);
+    g.save();g.lineWidth=1;g.font='12px system-ui,sans-serif';
+    if(o.grid!==false){g.strokeStyle='#eef2f5';g.beginPath();
+      tx.t.forEach(function(v){var X=Math.round(p.X(v))+.5;g.moveTo(X,p.m.t);g.lineTo(X,p.h-p.m.b);});
+      ty.t.forEach(function(v){var Y=Math.round(p.Y(v))+.5;g.moveTo(p.m.l,Y);g.lineTo(p.w-p.m.r,Y);});
+      g.stroke();}
+    g.strokeStyle=C.linea;g.strokeRect(p.m.l+.5,p.m.t+.5,p.w-p.m.l-p.m.r-1,p.h-p.m.t-p.m.b-1);
+    g.fillStyle=C.gris;g.textAlign='center';g.textBaseline='top';
+    tx.t.forEach(function(v){g.fillText(fmtTick(v,tx.step),p.X(v),p.h-p.m.b+6);});
+    g.textAlign='right';g.textBaseline='middle';
+    ty.t.forEach(function(v){g.fillText(fmtTick(v,ty.step),p.m.l-7,p.Y(v));});
+    g.fillStyle=C.tinta;g.font='13px system-ui,sans-serif';
+    if(xl){g.textAlign='center';g.textBaseline='bottom';g.fillText(xl,(p.m.l+p.w-p.m.r)/2,p.h-2);}
+    if(yl){g.save();g.translate(11,(p.m.t+p.h-p.m.b)/2);g.rotate(-Math.PI/2);
+      g.textAlign='center';g.textBaseline='top';g.fillText(yl,0,0);g.restore();}
+    g.restore();return p;};
+  p.clip=function(on){var g=p.ctx;if(on){g.save();g.beginPath();
+      g.rect(p.m.l,p.m.t,p.w-p.m.l-p.m.r,p.h-p.m.t-p.m.b);g.clip();}else{g.restore();}return p;};
+  p.line=function(xs,ys,o){o=o||{};var g=p.ctx;g.save();p.clip(true);
+    g.strokeStyle=o.c||C.azul;g.lineWidth=o.w||2;g.setLineDash(o.dash||[]);
+    g.beginPath();var st=false;
+    for(var i=0;i<xs.length;i++){if(!isFinite(ys[i])){st=false;continue;}
+      var X=p.X(xs[i]),Y=p.Y(ys[i]);if(!st){g.moveTo(X,Y);st=true;}else g.lineTo(X,Y);}
+    g.stroke();p.clip(false);g.restore();return p;};
+  p.pts=function(xs,ys,o){o=o||{};var g=p.ctx,r=o.r||3.5;g.save();p.clip(true);
+    g.fillStyle=o.c||C.rojo;g.strokeStyle=o.edge||'#fff';g.lineWidth=1;
+    for(var i=0;i<xs.length;i++){var X=p.X(xs[i]),Y=p.Y(ys[i]);
+      g.beginPath();g.arc(X,Y,r,0,6.2832);g.fill();if(o.edge!==false)g.stroke();}
+    p.clip(false);g.restore();return p;};
+  p.ebars=function(xs,ys,ey,ex,o){o=o||{};var g=p.ctx;g.save();p.clip(true);
+    g.strokeStyle=o.c||C.rojo;g.lineWidth=o.w||1.4;
+    for(var i=0;i<xs.length;i++){var X=p.X(xs[i]);
+      if(ey&&ey[i]>0){var Y1=p.Y(ys[i]-ey[i]),Y2=p.Y(ys[i]+ey[i]);
+        g.beginPath();g.moveTo(X,Y1);g.lineTo(X,Y2);g.moveTo(X-4,Y1);g.lineTo(X+4,Y1);
+        g.moveTo(X-4,Y2);g.lineTo(X+4,Y2);g.stroke();}
+      if(ex&&ex[i]>0){var Y=p.Y(ys[i]),X1=p.X(xs[i]-ex[i]),X2=p.X(xs[i]+ex[i]);
+        g.beginPath();g.moveTo(X1,Y);g.lineTo(X2,Y);g.moveTo(X1,Y-4);g.lineTo(X1,Y+4);
+        g.moveTo(X2,Y-4);g.lineTo(X2,Y+4);g.stroke();}}
+    p.clip(false);g.restore();return p;};
+  p.seg=function(x1,y1,x2,y2,o){o=o||{};var g=p.ctx;g.save();p.clip(true);
+    g.strokeStyle=o.c||C.gris;g.lineWidth=o.w||1.5;g.setLineDash(o.dash||[]);
+    g.beginPath();g.moveTo(p.X(x1),p.Y(y1));g.lineTo(p.X(x2),p.Y(y2));g.stroke();
+    p.clip(false);g.restore();return p;};
+  p.hline=function(y,o){return p.seg(p.x0,y,p.x1,y,o);};
+  p.vline=function(x,o){return p.seg(x,p.y0,x,p.y1,o);};
+  p.bars=function(h,o){o=o||{};var g=p.ctx,n=h.c.length,w=h.w;g.save();p.clip(true);
+    g.fillStyle=o.c||'rgba(27,73,101,.65)';g.strokeStyle=o.edge||'#fff';g.lineWidth=1;
+    for(var i=0;i<n;i++){if(h.c[i]<=0)continue;
+      var X1=p.X(h.lo+i*w),X2=p.X(h.lo+(i+1)*w),Y=p.Y(h.c[i]),Y0=p.Y(0);
+      g.fillRect(X1,Y,Math.max(1,X2-X1-1),Y0-Y);
+      if(X2-X1>3)g.strokeRect(X1,Y,Math.max(1,X2-X1-1),Y0-Y);}
+    p.clip(false);g.restore();return p;};
+  p.band=function(xs,lo,hi,o){o=o||{};var g=p.ctx;g.save();p.clip(true);
+    g.fillStyle=o.c||'rgba(27,73,101,.14)';g.beginPath();
+    g.moveTo(p.X(xs[0]),p.Y(lo[0]));
+    for(var i=1;i<xs.length;i++)g.lineTo(p.X(xs[i]),p.Y(lo[i]));
+    for(i=xs.length-1;i>=0;i--)g.lineTo(p.X(xs[i]),p.Y(hi[i]));
+    g.closePath();g.fill();p.clip(false);g.restore();return p;};
+  p.txt=function(x,y,s,o){o=o||{};var g=p.ctx;g.save();
+    g.fillStyle=o.c||C.tinta;g.font=o.font||'13px system-ui,sans-serif';
+    g.textAlign=o.align||'left';g.textBaseline=o.base||'bottom';
+    g.fillText(s,o.px?x:p.X(x),o.px?y:p.Y(y));g.restore();return p;};
+  p.resize();
+  return p;
+}
+/* re-dibujado en resize */
+var _redraws=[];
+function onResize(f){_redraws.push(f);}
+window.addEventListener('resize',function(){_redraws.forEach(function(f){f();});});
+
+/* control deslizante: devuelve valor y engancha el callback */
+function slider(id,cb){var s=$(id),v=$(id+'_v');
+  function upd(){if(v)v.textContent=s.dataset.fmt?
+      (+s.value).toFixed(+s.dataset.fmt):s.value;if(cb)cb();}
+  s.addEventListener('input',upd);upd();return s;}
+function val(id){return +$(id).value;}
+
+/* altura para iframes (WordPress) */
+function avisarAltura(){try{var h=document.documentElement.scrollHeight;
+  parent.postMessage({tipo:'altura-sim',alto:h,src:location.pathname},'*');}catch(e){}}
+window.addEventListener('load',function(){avisarAltura();setTimeout(avisarAltura,600);});
+window.addEventListener('resize',avisarAltura);
+
+
+</script>
+</body>
+</html>

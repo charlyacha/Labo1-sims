@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cuadrados mínimos, residuos y el coeficiente r · Labo 1 (Cátedra Acha)</title>
+<style>
+:root{
+  --tinta:#16222c; --gris:#5b6b76; --linea:#d7dee3; --fondo:#ffffff; --panel:#f5f8fa;
+  --azul:#1b4965; --rojo:#c1444f; --verde:#1f8a70; --ocre:#c98a1e; --violeta:#6a4c93;
+  --radio:10px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fondo);color:var(--tinta);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  font-size:16px;line-height:1.55}
+.wrap{max-width:920px;margin:0 auto;padding:18px 16px 48px}
+header.top{border-bottom:3px solid var(--azul);padding-bottom:10px;margin-bottom:18px}
+.tag{display:inline-block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;
+  color:#fff;background:var(--azul);padding:3px 9px;border-radius:999px}
+h1{font-size:1.5rem;margin:.5rem 0 .2rem;line-height:1.25}
+h2{font-size:1.12rem;margin:1.9rem 0 .5rem;color:var(--azul);
+   border-left:4px solid var(--azul);padding-left:9px}
+h3{font-size:1rem;margin:1.2rem 0 .3rem;color:var(--gris)}
+p.sub{color:var(--gris);margin:.2rem 0 0}
+.card{background:var(--panel);border:1px solid var(--linea);border-radius:var(--radio);
+  padding:14px;margin:14px 0}
+.card.blanco{background:#fff}
+.ctrl{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px 18px;margin:6px 0 2px}
+.ctrl label{display:block;font-size:13px;color:var(--gris);margin-bottom:2px}
+.ctrl .val{float:right;font-variant-numeric:tabular-nums;color:var(--tinta);font-weight:600}
+input[type=range]{width:100%;accent-color:var(--azul);margin:0}
+select,input[type=number]{width:100%;padding:5px 7px;border:1px solid var(--linea);
+  border-radius:6px;background:#fff;color:var(--tinta);font-size:14px}
+.btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+button{font:inherit;font-size:14px;padding:7px 14px;border-radius:8px;border:1px solid var(--azul);
+  background:var(--azul);color:#fff;cursor:pointer}
+button.sec{background:#fff;color:var(--azul)}
+button:active{transform:translateY(1px)}
+button[disabled]{opacity:.45;cursor:default}
+label.chk{font-size:14px;color:var(--tinta);display:inline-flex;align-items:center;gap:6px;
+  margin-right:14px;cursor:pointer}
+canvas{display:block;width:100%;background:#fff;border:1px solid var(--linea);
+  border-radius:8px;touch-action:none}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:640px){.grid2{grid-template-columns:1fr}}
+.out{font-variant-numeric:tabular-nums;font-size:14px}
+.out b{font-weight:600}
+table{border-collapse:collapse;width:100%;font-size:14px;margin-top:8px}
+th,td{border-bottom:1px solid var(--linea);padding:5px 7px;text-align:right}
+th:first-child,td:first-child{text-align:left}
+th{color:var(--gris);font-weight:600;font-size:12.5px;text-transform:uppercase;letter-spacing:.03em}
+.nota{border-left:4px solid var(--ocre);background:#fdf8ec;padding:10px 12px;border-radius:0 8px 8px 0;
+  margin:14px 0;font-size:14.5px}
+.clave{border-left:4px solid var(--verde);background:#eef8f5;padding:10px 12px;border-radius:0 8px 8px 0;
+  margin:14px 0;font-size:14.5px}
+.aviso{border-left:4px solid var(--rojo);background:#fbeff0;padding:10px 12px;border-radius:0 8px 8px 0;
+  margin:14px 0;font-size:14.5px}
+.consigna{background:#fff;border:1px dashed var(--azul);border-radius:8px;padding:10px 12px;margin:14px 0;font-size:14.5px}
+.consigna b{color:var(--azul)}
+code{background:#eef2f5;padding:1px 5px;border-radius:4px;font-size:.9em}
+footer{margin-top:34px;padding-top:12px;border-top:1px solid var(--linea);
+  color:var(--gris);font-size:13px}
+a{color:var(--azul)}
+.legend{font-size:13px;color:var(--gris);margin-top:6px}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:2px;margin-right:4px;vertical-align:-1px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top">
+  <span class="tag">Clases 4–5 · Labo 1</span>
+  <h1>Cuadrados mínimos, residuos y el coeficiente r</h1>
+  <p class="sub">Qué minimiza el ajuste, qué dicen los residuos y por qué r no mide bondad de ajuste.</p>
+</header>
+
+<p>Ajustar una recta no es "pasar una línea que quede linda". Es minimizar una cantidad concreta:
+la suma de los cuadrados de los residuos. Esta página muestra esa suma <b>como área</b>, y después
+muestra por qué el coeficiente r no sirve para decidir si un modelo describe los datos.</p>
+
+<h2>1 · Qué minimiza el método</h2>
+<p>Arrastrá los puntos con el mouse (o el dedo). Con el modo manual movés vos la recta y ves cómo
+crece la suma de cuadrados respecto del mínimo que encuentra el método.</p>
+<div class="card">
+  <div class="btns" style="margin-top:0">
+    <button class="sec" id="bn">Nuevos datos</button>
+    <button class="sec" id="bo">Agregar un dato lejano</button>
+    <label class="chk"><input type="checkbox" id="chQ" checked> dibujar los cuadrados</label>
+    <label class="chk"><input type="checkbox" id="chM"> mover la recta a mano</label>
+  </div>
+  <div class="ctrl" id="manual" style="display:none">
+    <div><label for="ma">ordenada al origen a <span class="val" id="ma_v"></span></label>
+      <input type="range" id="ma" min="-6" max="14" step="0.05" value="3" data-fmt="2"></div>
+    <div><label for="mb">pendiente b <span class="val" id="mb_v"></span></label>
+      <input type="range" id="mb" min="-1.5" max="3" step="0.01" value="0.5" data-fmt="2"></div>
+  </div>
+  <canvas id="cvA" style="height:360px"></canvas>
+  <canvas id="cvR" style="height:170px"></canvas>
+  <p class="out" id="outA"></p>
+</div>
+<div class="nota">
+Los cuadrados hacen visible por qué el método es <b>sensible a los puntos lejanos</b>: un residuo
+del doble pesa cuatro veces. Un solo dato malo puede torcer toda la recta. Esto no es un defecto a
+esconder: es la razón por la que <b>siempre</b> se mira el gráfico y el de residuos antes de creerle
+a los números del ajuste.
+</div>
+
+<h2>2 · Los residuos son el diagnóstico</h2>
+<p>El panel de abajo del gráfico es el más informativo de todos. Con un modelo correcto, los residuos
+son ruido sin forma alrededor de cero. Probá los casos preparados:</p>
+<div class="card blanco">
+  <div class="btns" style="margin-top:0">
+    <button class="sec" id="c1">modelo correcto</button>
+    <button class="sec" id="c2">falta un término cuadrático</button>
+    <button class="sec" id="c3">un outlier</button>
+    <button class="sec" id="c4">la incerteza crece con x</button>
+  </div>
+  <p class="legend">Cada caso reemplaza los datos del panel de arriba. Mirá los residuos, no R².</p>
+</div>
+
+<h2>3 · El cuarteto de Anscombe</h2>
+<p>Cuatro conjuntos de datos con <b>exactamente</b> el mismo ajuste, el mismo r y el mismo R².
+Y con nada en común.</p>
+<div class="card">
+  <div class="btns" style="margin-top:0">
+    <button class="sec" id="a1">I</button><button class="sec" id="a2">II</button>
+    <button class="sec" id="a3">III</button><button class="sec" id="a4">IV</button>
+    <button id="a0">los cuatro juntos</button>
+  </div>
+  <canvas id="cvQ" style="height:340px"></canvas>
+  <p class="out" id="outQ"></p>
+</div>
+<div class="aviso">
+<b>r no es un criterio de bondad de ajuste.</b> Mide cuán lineal es la <i>asociación</i> entre dos
+variables, y depende del rango que barriste. Un r de 0.9999 convive tranquilamente con un modelo
+equivocado (lo ves en el panel siguiente), y un r modesto puede corresponder a un modelo
+perfectamente correcto medido en un rango corto.
+</div>
+
+<h2>4 · r depende del rango, no de la calidad del modelo</h2>
+<div class="card blanco">
+  <div class="ctrl">
+    <div><label for="rg">Rango de x barrido <span class="val" id="rg_v"></span></label>
+      <input type="range" id="rg" min="0.1" max="1" step="0.02" value="1" data-fmt="2"></div>
+    <div><label for="ru">Ruido de las mediciones <span class="val" id="ru_v"></span></label>
+      <input type="range" id="ru" min="0.05" max="2" step="0.05" value="0.5" data-fmt="2"></div>
+  </div>
+  <canvas id="cvS" style="height:280px"></canvas>
+  <p class="out" id="outS"></p>
+</div>
+<div class="clave">
+Mismos datos, misma física, mismo instrumento: achicás el rango de x y r se desploma, aunque el
+modelo lineal sigue siendo <b>igual de correcto</b>. Lo que empeoró no es el modelo: es tu capacidad
+de determinar la pendiente. Eso ya lo dice, y mucho mejor, la incerteza de la pendiente.
+</div>
+
+<div class="consigna">
+<b>Para pensar antes de la clase.</b> (a) Con el modo manual, ¿podés encontrar una recta con
+menor suma de cuadrados que la del ajuste? (b) En el caso "falta un término cuadrático", ¿qué valor
+tiene R²? ¿Te habrías dado cuenta sin mirar los residuos? (c) En Anscombe IV, ¿cuántos puntos
+determinan la pendiente?
+</div>
+
+<footer>
+  <b>Laboratorio 1 — Cátedra Acha</b> · Departamento de Física, FCEyN-UBA ·
+  Simulación interactiva de uso libre para el curso. Todo corre en tu navegador: no se envía ningún dato.
+</footer>
+</div>
+<script>
+/* ============ kit minimo de graficos + estadistica (Labo 1, Catedra Acha) ============ */
+var C={azul:'#1b4965',rojo:'#c1444f',verde:'#1f8a70',ocre:'#c98a1e',violeta:'#6a4c93',
+       gris:'#5b6b76',linea:'#d7dee3',tinta:'#16222c'};
+
+function $(id){return document.getElementById(id);}
+function el(t,a){var e=document.createElement(t);for(var k in (a||{}))e[k]=a[k];return e;}
+
+/* ---- numeros ---- */
+function nice(x,round){var e=Math.floor(Math.log10(x)),f=x/Math.pow(10,e),nf;
+  if(round){nf=f<1.5?1:(f<3?2:(f<7?5:10));}else{nf=f<=1?1:(f<=2?2:(f<=5?5:10));}
+  return nf*Math.pow(10,e);}
+function ticks(a,b,n){if(!(b>a))return{t:[a],step:1};
+  var step=nice((b-a)/Math.max(1,n-1),true),s=Math.ceil(a/step-1e-9)*step,t=[];
+  for(var v=s;v<=b+step*1e-6;v+=step)t.push(Math.abs(v)<step*1e-9?0:v);
+  return{t:t,step:step};}
+function fmtTick(v,step){var a=Math.abs(v);
+  if(a!==0&&(a>=1e5||a<1e-4))return v.toExponential(1);
+  var d=Math.max(0,-Math.floor(Math.log10(step)+1e-9));return v.toFixed(Math.min(d,6));}
+function fmt(x,n){if(!isFinite(x))return '—';return x.toFixed(n===undefined?2:n);}
+/* redondeo de catedra: incerteza a 1 cifra significativa, valor al mismo orden */
+function reportar(x,dx,u){
+  if(!(dx>0)||!isFinite(dx))return fmt(x,3)+(u?' '+u:'');
+  var e=Math.floor(Math.log10(dx)),p=Math.pow(10,e),d=Math.round(dx/p);
+  if(d>=10){d=1;e+=1;p=Math.pow(10,e);}
+  var dxr=d*p, xr=Math.round(x/p)*p, dec=Math.max(0,-e);
+  return xr.toFixed(dec)+' ± '+dxr.toFixed(dec)+(u?' '+u:'');
+}
+function pot10(x,dec){ // notacion x·10^n para textos
+  if(x===0)return '0';var e=Math.floor(Math.log10(Math.abs(x)));
+  return (x/Math.pow(10,e)).toFixed(dec===undefined?2:dec)+'·10<sup>'+e+'</sup>';}
+
+/* ---- azar y estadistica ---- */
+var _z2=null;
+function randn(){if(_z2!==null){var z=_z2;_z2=null;return z;}
+  var u=0,v=0;while(u===0)u=Math.random();while(v===0)v=Math.random();
+  var r=Math.sqrt(-2*Math.log(u));_z2=r*Math.sin(2*Math.PI*v);return r*Math.cos(2*Math.PI*v);}
+function mean(a){var s=0;for(var i=0;i<a.length;i++)s+=a[i];return s/a.length;}
+function sd(a,ddof){ddof=(ddof===undefined)?1:ddof;if(a.length<=ddof)return NaN;
+  var m=mean(a),s=0;for(var i=0;i<a.length;i++)s+=(a[i]-m)*(a[i]-m);return Math.sqrt(s/(a.length-ddof));}
+function linspace(a,b,n){var v=[];for(var i=0;i<n;i++)v.push(a+(b-a)*i/(n-1));return v;}
+function hist(d,nb,lo,hi){var c=new Array(nb).fill(0),w=(hi-lo)/nb;
+  for(var i=0;i<d.length;i++){var k=Math.floor((d[i]-lo)/w);if(k>=0&&k<nb)c[k]++;}
+  return{c:c,lo:lo,hi:hi,w:w};}
+function erf(x){var s=x<0?-1:1;x=Math.abs(x);
+  var a1=0.254829592,a2=-0.284496736,a3=1.421413741,a4=-1.453152027,a5=1.061405429,p=0.3275911;
+  var t=1/(1+p*x),y=1-(((((a5*t+a4)*t)+a3)*t+a2)*t+a1)*t*Math.exp(-x*x);return s*y;}
+function Phi(z){return 0.5*(1+erf(z/Math.SQRT2));}
+function gauss(x,mu,s){return Math.exp(-0.5*Math.pow((x-mu)/s,2))/(s*Math.sqrt(2*Math.PI));}
+/* Q(a,x)=gamma incompleta superior regularizada (Numerical Recipes) */
+function gammln(x){var c=[76.18009172947146,-86.50532032941677,24.01409824083091,
+  -1.231739572450155,0.1208650973866179e-2,-0.5395239384953e-5],y=x,t=x+5.5,s=1.000000000190015;
+  t-=(x+0.5)*Math.log(t);for(var j=0;j<6;j++)s+=c[j]/++y;return -t+Math.log(2.5066282746310005*s/x);}
+function gammq(a,x){if(x<0||a<=0)return NaN;
+  if(x<a+1){var ap=a,sum=1/a,del=sum;
+    for(var n=1;n<500;n++){ap++;del*=x/ap;sum+=del;if(Math.abs(del)<Math.abs(sum)*1e-12)break;}
+    return 1-sum*Math.exp(-x+a*Math.log(x)-gammln(a));}
+  var b=x+1-a,c0=1e300,d=1/b,h=d;
+  for(var i=1;i<500;i++){var an=-i*(i-a);b+=2;d=an*d+b;if(Math.abs(d)<1e-300)d=1e-300;
+    c0=b+an/c0;if(Math.abs(c0)<1e-300)c0=1e-300;d=1/d;var de=d*c0;h*=de;
+    if(Math.abs(de-1)<1e-12)break;}
+  return h*Math.exp(-x+a*Math.log(x)-gammln(a));}
+function pchi2(chi2,nu){return gammq(nu/2,chi2/2);}   /* p-valor (cola derecha) */
+
+/* ---- cuadrados minimos ---- */
+function ols(x,y){var n=x.length,mx=mean(x),my=mean(y),sxx=0,sxy=0,syy=0;
+  for(var i=0;i<n;i++){sxx+=(x[i]-mx)*(x[i]-mx);sxy+=(x[i]-mx)*(y[i]-my);syy+=(y[i]-my)*(y[i]-my);}
+  var b=sxy/sxx,a=my-b*mx,ss=0;
+  for(i=0;i<n;i++){var r=y[i]-(a+b*x[i]);ss+=r*r;}
+  var s2=ss/Math.max(1,n-2);
+  return{a:a,b:b,sa:Math.sqrt(s2*(1/n+mx*mx/sxx)),sb:Math.sqrt(s2/sxx),
+         r:sxy/Math.sqrt(sxx*syy),R2:1-ss/syy,sy:Math.sqrt(s2),ss:ss,n:n};}
+function wls(x,y,sy){var n=x.length,S=0,Sx=0,Sy=0,Sxx=0,Sxy=0;
+  for(var i=0;i<n;i++){var w=1/(sy[i]*sy[i]);S+=w;Sx+=w*x[i];Sy+=w*y[i];Sxx+=w*x[i]*x[i];Sxy+=w*x[i]*y[i];}
+  var D=S*Sxx-Sx*Sx,b=(S*Sxy-Sx*Sy)/D,a=(Sxx*Sy-Sx*Sxy)/D,chi2=0;
+  for(i=0;i<n;i++){var r=(y[i]-(a+b*x[i]))/sy[i];chi2+=r*r;}
+  var nu=n-2;
+  return{a:a,b:b,sa:Math.sqrt(Sxx/D),sb:Math.sqrt(S/D),chi2:chi2,nu:nu,
+         chi2r:chi2/nu,p:pchi2(chi2,nu)};}
+
+/* ============================== PLOT ============================== */
+function Plot(cv,opt){
+  opt=opt||{};
+  var p={cv:cv,ctx:cv.getContext('2d'),m:Object.assign({l:58,r:14,t:12,b:38},opt.m||{})};
+  p.resize=function(){var dpr=window.devicePixelRatio||1,w=cv.clientWidth,h=cv.clientHeight;
+    if(w<2||h<2)return;cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr);
+    p.ctx.setTransform(dpr,0,0,dpr,0,0);p.w=w;p.h=h;};
+  p.box=function(x0,x1,y0,y1){if(x1===x0){x1=x0+1;}if(y1===y0){y1=y0+1;}
+    p.x0=x0;p.x1=x1;p.y0=y0;p.y1=y1;return p;};
+  p.autoY=function(arr,pad){var lo=Infinity,hi=-Infinity;
+    for(var i=0;i<arr.length;i++){if(isFinite(arr[i])){lo=Math.min(lo,arr[i]);hi=Math.max(hi,arr[i]);}}
+    var d=(hi-lo)||Math.abs(hi)||1;pad=(pad===undefined)?0.08:pad;p.y0=lo-d*pad;p.y1=hi+d*pad;return p;};
+  p.X=function(x){return p.m.l+(x-p.x0)/(p.x1-p.x0)*(p.w-p.m.l-p.m.r);};
+  p.Y=function(y){return p.h-p.m.b-(y-p.y0)/(p.y1-p.y0)*(p.h-p.m.t-p.m.b);};
+  p.iX=function(px){return p.x0+(px-p.m.l)/(p.w-p.m.l-p.m.r)*(p.x1-p.x0);};
+  p.iY=function(py){return p.y0+(p.h-p.m.b-py)/(p.h-p.m.t-p.m.b)*(p.y1-p.y0);};
+  p.clear=function(){p.ctx.clearRect(0,0,p.w,p.h);
+    p.ctx.fillStyle='#fff';p.ctx.fillRect(0,0,p.w,p.h);return p;};
+  p.frame=function(xl,yl,o){o=o||{};var g=p.ctx,tx=ticks(p.x0,p.x1,o.nx||6),ty=ticks(p.y0,p.y1,o.ny||5);
+    g.save();g.lineWidth=1;g.font='12px system-ui,sans-serif';
+    if(o.grid!==false){g.strokeStyle='#eef2f5';g.beginPath();
+      tx.t.forEach(function(v){var X=Math.round(p.X(v))+.5;g.moveTo(X,p.m.t);g.lineTo(X,p.h-p.m.b);});
+      ty.t.forEach(function(v){var Y=Math.round(p.Y(v))+.5;g.moveTo(p.m.l,Y);g.lineTo(p.w-p.m.r,Y);});
+      g.stroke();}
+    g.strokeStyle=C.linea;g.strokeRect(p.m.l+.5,p.m.t+.5,p.w-p.m.l-p.m.r-1,p.h-p.m.t-p.m.b-1);
+    g.fillStyle=C.gris;g.textAlign='center';g.textBaseline='top';
+    tx.t.forEach(function(v){g.fillText(fmtTick(v,tx.step),p.X(v),p.h-p.m.b+6);});
+    g.textAlign='right';g.textBaseline='middle';
+    ty.t.forEach(function(v){g.fillText(fmtTick(v,ty.step),p.m.l-7,p.Y(v));});
+    g.fillStyle=C.tinta;g.font='13px system-ui,sans-serif';
+    if(xl){g.textAlign='center';g.textBaseline='bottom';g.fillText(xl,(p.m.l+p.w-p.m.r)/2,p.h-2);}
+    if(yl){g.save();g.translate(11,(p.m.t+p.h-p.m.b)/2);g.rotate(-Math.PI/2);
+      g.textAlign='center';g.textBaseline='top';g.fillText(yl,0,0);g.restore();}
+    g.restore();return p;};
+  p.clip=function(on){var g=p.ctx;if(on){g.save();g.beginPath();
+      g.rect(p.m.l,p.m.t,p.w-p.m.l-p.m.r,p.h-p.m.t-p.m.b);g.clip();}else{g.restore();}return p;};
+  p.line=function(xs,ys,o){o=o||{};var g=p.ctx;g.save();p.clip(true);
+    g.strokeStyle=o.c||C.azul;g.lineWidth=o.w||2;g.setLineDash(o.dash||[]);
+    g.beginPath();var st=false;
+    for(var i=0;i<xs.length;i++){if(!isFinite(ys[i])){st=false;continue;}
+      var X=p.X(xs[i]),Y=p.Y(ys[i]);if(!st){g.moveTo(X,Y);st=true;}else g.lineTo(X,Y);}
+    g.stroke();p.clip(false);g.restore();return p;};
+  p.pts=function(xs,ys,o){o=o||{};var g=p.ctx,r=o.r||3.5;g.save();p.clip(true);
+    g.fillStyle=o.c||C.rojo;g.strokeStyle=o.edge||'#fff';g.lineWidth=1;
+    for(var i=0;i<xs.length;i++){var X=p.X(xs[i]),Y=p.Y(ys[i]);
+      g.beginPath();g.arc(X,Y,r,0,6.2832);g.fill();if(o.edge!==false)g.stroke();}
+    p.clip(false);g.restore();return p;};
+  p.ebars=function(xs,ys,ey,ex,o){o=o||{};var g=p.ctx;g.save();p.clip(true);
+    g.strokeStyle=o.c||C.rojo;g.lineWidth=o.w||1.4;
+    for(var i=0;i<xs.length;i++){var X=p.X(xs[i]);
+      if(ey&&ey[i]>0){var Y1=p.Y(ys[i]-ey[i]),Y2=p.Y(ys[i]+ey[i]);
+        g.beginPath();g.moveTo(X,Y1);g.lineTo(X,Y2);g.moveTo(X-4,Y1);g.lineTo(X+4,Y1);
+        g.moveTo(X-4,Y2);g.lineTo(X+4,Y2);g.stroke();}
+      if(ex&&ex[i]>0){var Y=p.Y(ys[i]),X1=p.X(xs[i]-ex[i]),X2=p.X(xs[i]+ex[i]);
+        g.beginPath();g.moveTo(X1,Y);g.lineTo(X2,Y);g.moveTo(X1,Y-4);g.lineTo(X1,Y+4);
+        g.moveTo(X2,Y-4);g.lineTo(X2,Y+4);g.stroke();}}
+    p.clip(false);g.restore();return p;};
+  p.seg=function(x1,y1,x2,y2,o){o=o||{};var g=p.ctx;g.save();p.clip(true);
+    g.strokeStyle=o.c||C.gris;g.lineWidth=o.w||1.5;g.setLineDash(o.dash||[]);
+    g.beginPath();g.moveTo(p.X(x1),p.Y(y1));g.lineTo(p.X(x2),p.Y(y2));g.stroke();
+    p.clip(false);g.restore();return p;};
+  p.hline=function(y,o){return p.seg(p.x0,y,p.x1,y,o);};
+  p.vline=function(x,o){return p.seg(x,p.y0,x,p.y1,o);};
+  p.bars=function(h,o){o=o||{};var g=p.ctx,n=h.c.length,w=h.w;g.save();p.clip(true);
+    g.fillStyle=o.c||'rgba(27,73,101,.65)';g.strokeStyle=o.edge||'#fff';g.lineWidth=1;
+    for(var i=0;i<n;i++){if(h.c[i]<=0)continue;
+      var X1=p.X(h.lo+i*w),X2=p.X(h.lo+(i+1)*w),Y=p.Y(h.c[i]),Y0=p.Y(0);
+      g.fillRect(X1,Y,Math.max(1,X2-X1-1),Y0-Y);
+      if(X2-X1>3)g.strokeRect(X1,Y,Math.max(1,X2-X1-1),Y0-Y);}
+    p.clip(false);g.restore();return p;};
+  p.band=function(xs,lo,hi,o){o=o||{};var g=p.ctx;g.save();p.clip(true);
+    g.fillStyle=o.c||'rgba(27,73,101,.14)';g.beginPath();
+    g.moveTo(p.X(xs[0]),p.Y(lo[0]));
+    for(var i=1;i<xs.length;i++)g.lineTo(p.X(xs[i]),p.Y(lo[i]));
+    for(i=xs.length-1;i>=0;i--)g.lineTo(p.X(xs[i]),p.Y(hi[i]));
+    g.closePath();g.fill();p.clip(false);g.restore();return p;};
+  p.txt=function(x,y,s,o){o=o||{};var g=p.ctx;g.save();
+    g.fillStyle=o.c||C.tinta;g.font=o.font||'13px system-ui,sans-serif';
+    g.textAlign=o.align||'left';g.textBaseline=o.base||'bottom';
+    g.fillText(s,o.px?x:p.X(x),o.px?y:p.Y(y));g.restore();return p;};
+  p.resize();
+  return p;
+}
+/* re-dibujado en resize */
+var _redraws=[];
+function onResize(f){_redraws.push(f);}
+window.addEventListener('resize',function(){_redraws.forEach(function(f){f();});});
+
+/* control deslizante: devuelve valor y engancha el callback */
+function slider(id,cb){var s=$(id),v=$(id+'_v');
+  function upd(){if(v)v.textContent=s.dataset.fmt?
+      (+s.value).toFixed(+s.dataset.fmt):s.value;if(cb)cb();}
+  s.addEventListener('input',upd);upd();return s;}
+function val(id){return +$(id).value;}
+
+/* altura para iframes (WordPress) */
+function avisarAltura(){try{var h=document.documentElement.scrollHeight;
+  parent.postMessage({tipo:'altura-sim',alto:h,src:location.pathname},'*');}catch(e){}}
+window.addEventListener('load',function(){avisarAltura();setTimeout(avisarAltura,600);});
+window.addEventListener('resize',avisarAltura);
+
+
+/* ================= 1. cuadrados minimos interactivo ================= */
+var pA=Plot($('cvA')),pR=Plot($('cvR'),{m:{l:58,r:14,t:10,b:40}}),P=[],drag=-1;
+function datos(caso){
+  P=[];var n=11;
+  for(var i=0;i<n;i++){var x=1+9*i/(n-1),y;
+    if(caso===2)y=3+0.5*x+0.10*(x-5.5)*(x-5.5)+0.35*randn();
+    else if(caso===4)y=3+0.5*x+(0.06*x*x)*randn()*0.6;
+    else y=3+0.5*x+0.6*randn();
+    P.push({x:x,y:y});}
+  if(caso===3)P[7].y+=5.5;
+}
+function fitP(){var x=P.map(function(p){return p.x;}),y=P.map(function(p){return p.y;});
+  return ols(x,y);}
+function rectaActual(){
+  if($('chM').checked)return{a:val('ma'),b:val('mb')};
+  var f=fitP();return{a:f.a,b:f.b};}
+function dibA(){
+  var f=fitP(),L=rectaActual();
+  pA.resize();pA.clear();
+  var xs=P.map(function(p){return p.x;}),ys=P.map(function(p){return p.y;});
+  var x0=Math.min.apply(null,xs)-1,x1=Math.max.apply(null,xs)+1;
+  var y0=Math.min.apply(null,ys)-2,y1=Math.max.apply(null,ys)+2;
+  pA.box(x0,x1,y0,y1).frame('x','y');
+  /* cuadrados */
+  var sse=0,g=pA.ctx;
+  P.forEach(function(p){var yp=L.a+L.b*p.x,r=p.y-yp;sse+=r*r;});
+  if($('chQ').checked){g.save();pA.clip(true);
+    P.forEach(function(p){var yp=L.a+L.b*p.x,r=p.y-yp;
+      var Y1=pA.Y(p.y),Y2=pA.Y(yp),h=Math.abs(Y2-Y1),X=pA.X(p.x);
+      g.fillStyle='rgba(193,68,79,.16)';g.strokeStyle='rgba(193,68,79,.5)';
+      g.fillRect(X,Math.min(Y1,Y2),h,h);g.strokeRect(X,Math.min(Y1,Y2),h,h);});
+    pA.clip(false);g.restore();}
+  P.forEach(function(p){var yp=L.a+L.b*p.x;
+    pA.seg(p.x,p.y,p.x,yp,{c:C.rojo,w:1.2,dash:[3,2]});});
+  pA.line([x0,x1],[L.a+L.b*x0,L.a+L.b*x1],{c:$('chM').checked?C.ocre:C.azul,w:2.5});
+  if($('chM').checked)pA.line([x0,x1],[f.a+f.b*x0,f.a+f.b*x1],{c:C.azul,w:1.5,dash:[6,4]});
+  pA.pts(xs,ys,{c:C.tinta,r:5});
+  /* residuos */
+  var res=P.map(function(p){return p.y-(L.a+L.b*p.x);});
+  pR.resize();pR.clear();
+  var m=Math.max.apply(null,res.map(Math.abs))*1.35+1e-6;
+  pR.box(x0,x1,-m,m).frame('x','residuo',{ny:4});
+  pR.hline(0,{c:C.gris,dash:[5,4]});
+  pR.pts(xs,res,{c:C.rojo,r:4.5});
+  P.forEach(function(p,i){pR.seg(p.x,0,p.x,res[i],{c:C.rojo,w:1.2});});
+  var min=0;P.forEach(function(p){var r=p.y-(f.a+f.b*p.x);min+=r*r;});
+  $('outA').innerHTML='Recta dibujada: y = '+L.a.toFixed(3)+' + '+L.b.toFixed(3)+
+    ' x &nbsp;→ suma de cuadrados = <b>'+sse.toFixed(3)+'</b>'+
+    ($('chM').checked?' <span style="color:var(--ocre)">(el mínimo posible es '+min.toFixed(3)+
+      ', con a = '+f.a.toFixed(3)+' y b = '+f.b.toFixed(3)+')</span>':'')+
+    '<br>ajuste: a = <b>'+f.a.toFixed(3)+' ± '+f.sa.toFixed(3)+'</b>, b = <b>'+
+    f.b.toFixed(3)+' ± '+f.sb.toFixed(3)+'</b> · r = <b>'+f.r.toFixed(4)+'</b> · R² = <b>'+
+    f.R2.toFixed(4)+'</b>';
+}
+/* arrastre */
+function pos(e){var r=$('cvA').getBoundingClientRect(),t=(e.touches?e.touches[0]:e);
+  return{x:t.clientX-r.left,y:t.clientY-r.top};}
+function down(e){var q=pos(e),best=-1,bd=1e9;
+  P.forEach(function(p,i){var d=Math.hypot(pA.X(p.x)-q.x,pA.Y(p.y)-q.y);
+    if(d<bd){bd=d;best=i;}});
+  if(bd<22){drag=best;e.preventDefault();}}
+function move(e){if(drag<0)return;var q=pos(e);
+  P[drag].x=pA.iX(q.x);P[drag].y=pA.iY(q.y);dibA();e.preventDefault();}
+function up(){drag=-1;}
+['mousedown','touchstart'].forEach(function(t){$('cvA').addEventListener(t,down,{passive:false});});
+['mousemove','touchmove'].forEach(function(t){window.addEventListener(t,move,{passive:false});});
+['mouseup','touchend'].forEach(function(t){window.addEventListener(t,up);});
+$('bn').onclick=function(){datos(1);dibA();};
+$('bo').onclick=function(){P.push({x:11.5,y:15});dibA();};
+$('chQ').onchange=dibA;
+$('chM').onchange=function(){$('manual').style.display=$('chM').checked?'':'none';
+  if($('chM').checked){var f=fitP();$('ma').value=f.a.toFixed(2);$('mb').value=f.b.toFixed(2);
+    slider('ma',dibA);slider('mb',dibA);}dibA();};
+['ma','mb'].forEach(function(id){slider(id,dibA);});
+[['c1',1],['c2',2],['c3',3],['c4',4]].forEach(function(r){
+  $(r[0]).onclick=function(){datos(r[1]);dibA();};});
+onResize(dibA);datos(1);dibA();
+
+/* ================= 3. Anscombe ================= */
+var AX=[10,8,13,9,11,14,6,4,12,7,5],
+    AY=[[8.04,6.95,7.58,8.81,8.33,9.96,7.24,4.26,10.84,4.82,5.68],
+        [9.14,8.14,8.74,8.77,9.26,8.10,6.13,3.10,9.13,7.26,4.74],
+        [7.46,6.77,12.74,7.11,7.81,8.84,6.08,5.39,8.15,6.42,5.73],
+        [6.58,5.76,7.71,8.84,8.47,7.04,5.25,12.50,5.56,7.91,6.89]],
+    AX4=[8,8,8,8,8,8,8,19,8,8,8],modoQ=0;
+var pQ=Plot($('cvQ'));
+function dibQ(){
+  pQ.resize();pQ.clear();
+  var g=pQ.ctx;
+  if(modoQ===0){   /* cuatro paneles, moviendo los margenes del mismo Plot */
+    var W=pQ.w,H=pQ.h,m0=pQ.m;
+    for(var k=0;k<4;k++){
+      var cx=(k%2)*W/2,cy=Math.floor(k/2)*H/2;
+      pQ.m={l:cx+44,r:W-(cx+W/2)+12,t:cy+12,b:H-(cy+H/2)+30};
+      var xs=(k===3?AX4:AX),ys=AY[k],f=ols(xs,ys);
+      pQ.box(2,20,2,14).frame(k>1?'x':'',k%2===0?'y':'',{nx:4,ny:4});
+      pQ.line([2,20],[f.a+f.b*2,f.a+f.b*20],{c:C.azul,w:2});
+      pQ.pts(xs,ys,{c:C.rojo,r:4});
+      pQ.txt(pQ.m.l+10,pQ.m.t+22,['I','II','III','IV'][k],
+        {c:C.tinta,px:true,font:'700 18px system-ui'});}
+    pQ.m=m0;
+    $('outQ').innerHTML='Los cuatro tienen y = 3.00 + 0.500 x, r = 0.816, R² = 0.667. '+
+      'Sólo el <b>I</b> justifica una recta. El <b>II</b> es una parábola. El <b>III</b> es una recta '+
+      'perfecta con un outlier. El <b>IV</b> tiene la pendiente decidida por <b>un solo punto</b>.';
+    return;}
+  var k=modoQ-1,xs=(k===3?AX4:AX),ys=AY[k],f=ols(xs,ys);
+  pQ.box(2,20,2,14).frame('x','y');
+  pQ.line([2,20],[f.a+f.b*2,f.a+f.b*20],{c:C.azul,w:2.5});
+  pQ.pts(xs,ys,{c:C.rojo,r:5.5});
+  var res=xs.map(function(x,i){return ys[i]-(f.a+f.b*x);});
+  $('outQ').innerHTML='Conjunto <b>'+['I','II','III','IV'][k]+'</b>: y = '+f.a.toFixed(2)+
+    ' + '+f.b.toFixed(3)+' x · r = <b>'+f.r.toFixed(3)+'</b> · R² = <b>'+f.R2.toFixed(3)+
+    '</b> — idénticos a los otros tres.';
+}
+[['a1',1],['a2',2],['a3',3],['a4',4],['a0',0]].forEach(function(r){
+  $(r[0]).onclick=function(){modoQ=r[1];dibQ();};});
+onResize(dibQ);dibQ();
+
+/* ================= 4. r vs rango ================= */
+var pS=Plot($('cvS')),SD=[];
+function genS(){SD=[];for(var i=0;i<200;i++){var x=i/199;SD.push({u:x,e:randn()});}}
+function dibS(){
+  var rg=val('rg'),ru=val('ru'),xs=[],ys=[];
+  SD.forEach(function(p,i){if(i%8)return;var x=5+10*rg*(p.u-0.5);
+    xs.push(x);ys.push(2+1.2*x+ru*p.e);});
+  var f=ols(xs,ys);
+  pS.resize();pS.clear();
+  pS.box(-0.5,10.5,0,16).frame('x','y');
+  pS.line([-0.5,10.5],[2+1.2*(-0.5),2+1.2*10.5],{c:C.gris,w:1.5,dash:[6,4]});
+  pS.line([Math.min.apply(null,xs),Math.max.apply(null,xs)],
+          [f.a+f.b*Math.min.apply(null,xs),f.a+f.b*Math.max.apply(null,xs)],{c:C.azul,w:2.5});
+  pS.pts(xs,ys,{c:C.rojo,r:4});
+  pS.txt(pS.m.l+10,pS.m.t+16,'línea gris: la ley verdadera y = 2 + 1.2 x',{c:C.gris,px:true});
+  $('outS').innerHTML='rango barrido = <b>'+(10*rg).toFixed(1)+
+    '</b> · r = <b>'+f.r.toFixed(4)+'</b> · R² = <b>'+f.R2.toFixed(4)+
+    '</b> · pendiente = <b>'+f.b.toFixed(3)+' ± '+f.sb.toFixed(3)+'</b> (verdadera: 1.200)<br>'+
+    'El modelo nunca dejó de ser correcto. Lo que cambió es cuánta información tenés sobre la '+
+    'pendiente: mirá cómo crece <b>Δb</b> mientras r baja.';
+}
+['rg','ru'].forEach(function(id){slider(id,dibS);});
+onResize(dibS);genS();dibS();
+
+</script>
+</body>
+</html>
